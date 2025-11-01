@@ -1,0 +1,686 @@
+extends layout
+
+block content
+  nav.navbar
+    .navbar-brand Reports
+    .navbar-menu
+      a.nav-item(href="/dashboard") 
+        span.icon 🏠
+        | Dashboard
+      a.nav-item(href="/clock-in") 
+        span.icon ⏰
+        | Clock In/Out
+      a.nav-item(href="/profile") 
+        span.icon 👤
+        | Profile
+      a.nav-item(href="/work-templates") 
+        span.icon 📋
+        | Work Templates
+      a.nav-item(href="/logout") 
+        span.icon 🚪
+        | Logout
+
+  .container
+    .page-header
+      h1 📊 Work Reports
+      p.subtitle View and manage your working hours
+
+    //- Month Selector
+    .month-selector
+      h2 Select Month
+      .month-grid
+        each month, index in months
+          a.month-card(
+             href=`/reports?month=${index + 1}&year=${currentYear}`
+  class=(selectedMonth === (index + 1) ? 'active' : (index + 1 === new Date().getMonth() + 1 ? 'current' : ''))
+)
+            .month-name= month
+            if monthData[index + 1]
+              .month-stats
+                .stat-item
+                  span.stat-label Hours:
+                  span.stat-value= monthData[index + 1].totalHours || '0'
+                .stat-item
+                  span.stat-label OT:
+                  span.stat-value= monthData[index + 1].totalOT || '0'
+
+    //- Year Selector
+    .year-selector
+      form(method="GET" action="/reports")
+        label(for="year") Year:
+        select#year(name="year" onchange="this.form.submit()")
+          each year in availableYears
+            option(value=year selected=year === currentYear)= year
+
+    //- Monthly Report Details
+    if selectedMonth && reportEntries.length > 0
+      .report-section
+        .report-header
+          h2= `${months[selectedMonth - 1]} ${currentYear} - Detailed Report`
+          .summary-cards
+            .summary-card
+              .card-icon 🕐
+              .card-content
+                .card-label Total Hours
+                .card-value= summary.totalHours
+            .summary-card
+              .card-icon ⏱️
+              .card-content
+                .card-label Regular Hours
+                .card-value= summary.regularHours
+            .summary-card.overtime
+              .card-icon ⚡
+              .card-content
+                .card-label Overtime
+                .card-value= summary.overtimeHours
+            .summary-card
+              .card-icon 📅
+              .card-content
+                .card-label Work Days
+                .card-value= summary.workDays
+
+        .report-table-container
+          table.report-table
+            thead
+              tr
+                th Date
+                th Day
+                th Clock In
+                th Clock Out
+                th Duration
+                th Template
+                th Regular
+                th Overtime
+                th Notes
+                th Actions
+            tbody
+              each entry in reportEntries
+                tr(class=entry.isWeekend ? 'weekend-row' : '')
+                  td.date-cell= entry.date
+                  td.day-cell= entry.dayOfWeek
+                  td= entry.clockIn
+                  td= entry.clockOut || '-'
+                  td.duration-cell= entry.duration
+                  td.template-cell= entry.templateName
+                  td.regular-cell= entry.regularHours
+                  td.overtime-cell= entry.overtime
+                  td.notes-cell= entry.notes || '-'
+                  td.actions-cell
+                    button.btn-edit(onclick=`editEntry(${entry.logId})`) ✏️ Edit
+
+        .export-section
+          button.btn.btn-secondary(onclick="window.print()") 🖨️ Print Report
+          button.btn.btn-primary(onclick=`exportToCSV()`) 📥 Export CSV
+
+    else if selectedMonth
+      .no-data
+        p No work entries found for #{months[selectedMonth - 1]} #{currentYear}
+
+  //- Edit Modal
+  #editModal.modal
+    .modal-content
+      .modal-header
+        h3 Edit Work Entry
+        button.close-btn(onclick="closeModal()") ×
+      .modal-body
+        form#editForm(method="POST" action="/reports/update")
+          input(type="hidden" name="logId" id="editLogId")
+          input(type="hidden" name="month" value=selectedMonth)
+          input(type="hidden" name="year" value=currentYear)
+          
+          .form-group
+            label(for="editLoginTime") Clock In Time:
+            input.form-control(type="datetime-local" name="loginTime" id="editLoginTime" required)
+          
+          .form-group
+            label(for="editLogoutTime") Clock Out Time:
+            input.form-control(type="datetime-local" name="logoutTime" id="editLogoutTime")
+          
+          .form-group
+            label(for="editTemplate") Work Template:
+            select.form-control(name="workTemplateID" id="editTemplate" required)
+              each template in templates
+                option(value=template.TemplateID)= template.TemplateName
+          
+          .form-group
+            label(for="editNotes") Notes:
+            textarea.form-control(name="notes" id="editNotes" rows="3")
+          
+          .modal-actions
+            button.btn.btn-secondary(type="button" onclick="closeModal()") Cancel
+            button.btn.btn-primary(type="submit") Save Changes
+
+  style.
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #f5f7fa;
+    }
+    
+    .navbar {
+      background: #2c3e50;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .navbar-brand {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    
+    .navbar-menu {
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .nav-item {
+      color: white;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      transition: background 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .nav-item:hover {
+      background: #34495e;
+    }
+    
+    .icon {
+      font-size: 1.2rem;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+    
+    .page-header {
+      margin-bottom: 2rem;
+    }
+    
+    .page-header h1 {
+      color: #2c3e50;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .subtitle {
+      color: #7f8c8d;
+      font-size: 1rem;
+    }
+    
+    .month-selector {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+    
+    .month-selector h2 {
+      color: #2c3e50;
+      margin-bottom: 1.5rem;
+      font-size: 1.3rem;
+    }
+    
+    .month-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 1rem;
+    }
+
+    .month-card {
+      background: #f8f9fa;
+      padding: 1rem;
+      border-radius: 8px;
+      text-align: center;
+      text-decoration: none;
+      color: #2c3e50;
+      transition: all 0.3s;
+      border: 2px solid transparent;
+      cursor: pointer;
+    }
+    
+    .month-card:hover {
+      background: #e9ecef;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .month-card.active {
+      background: #3498db;
+      color: white;
+      border-color: #2980b9;
+    }
+    
+    .month-name {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .month-stats {
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+    }
+    
+    .stat-item {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 0.25rem;
+    }
+    
+    .stat-label {
+      opacity: 0.8;
+    }
+    
+    .stat-value {
+      font-weight: 600;
+    }
+    
+    .year-selector {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .year-selector label {
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    
+    .year-selector select {
+      padding: 0.5rem 1rem;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    
+    .report-section {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .report-header h2 {
+      color: #2c3e50;
+      margin-bottom: 1.5rem;
+    }
+    
+    .summary-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    
+    .summary-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 1.5rem;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .summary-card.overtime {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+    
+    .card-icon {
+      font-size: 2rem;
+    }
+    
+    .card-label {
+      font-size: 0.85rem;
+      opacity: 0.9;
+      margin-bottom: 0.25rem;
+    }
+    
+    .card-value {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    
+    .report-table-container {
+      overflow-x: auto;
+      margin-bottom: 2rem;
+    }
+    
+    .report-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .report-table thead {
+      background: #f8f9fa;
+    }
+    
+    .report-table th,
+    .report-table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #dee2e6;
+    }
+    
+    .report-table th {
+      font-weight: 600;
+      color: #2c3e50;
+      white-space: nowrap;
+    }
+    
+    .report-table tbody tr:hover {
+      background: #f8f9fa;
+    }
+    
+    .weekend-row {
+      background: #fff3cd !important;
+    }
+    
+    .date-cell {
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    
+    .day-cell {
+      color: #7f8c8d;
+      font-size: 0.9rem;
+    }
+    
+    .duration-cell {
+      font-weight: 600;
+    }
+    
+    .overtime-cell {
+      color: #e74c3c;
+      font-weight: 600;
+    }
+    
+    .regular-cell {
+      color: #27ae60;
+    }
+    
+    .notes-cell {
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 0.9rem;
+      color: #7f8c8d;
+    }
+    
+    .actions-cell {
+      text-align: center;
+    }
+    
+    .btn-edit {
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background 0.3s;
+    }
+    
+    .btn-edit:hover {
+      background: #2980b9;
+    }
+    
+    .export-section {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+    }
+    
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .btn-primary {
+      background: #3498db;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: #2980b9;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(52,152,219,0.3);
+    }
+    
+    .btn-secondary {
+      background: #95a5a6;
+      color: white;
+    }
+    
+    .btn-secondary:hover {
+      background: #7f8c8d;
+    }
+    
+    .no-data {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: #7f8c8d;
+      font-size: 1.1rem;
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal.active {
+      display: flex;
+    }
+    
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid #dee2e6;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .modal-header h3 {
+      color: #2c3e50;
+      margin: 0;
+    }
+    
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #7f8c8d;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+    }
+    
+    .close-btn:hover {
+      color: #2c3e50;
+    }
+    
+    .modal-body {
+      padding: 2rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #2c3e50;
+      font-weight: 500;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: #3498db;
+    }
+    
+    textarea.form-control {
+      resize: vertical;
+      font-family: inherit;
+    }
+    
+    .modal-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+      padding: 1.5rem;
+      border-top: 1px solid #dee2e6;
+    }
+    
+    @media print {
+      .navbar, .month-selector, .year-selector, .export-section, .actions-cell, .btn-edit {
+        display: none !important;
+      }
+      
+      body {
+        background: white;
+      }
+      
+      .report-section {
+        box-shadow: none;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .navbar {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .navbar-menu {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      
+      .month-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      }
+      
+      .summary-cards {
+        grid-template-columns: 1fr;
+      }
+      
+      .report-table {
+        font-size: 0.85rem;
+      }
+      
+      .report-table th,
+      .report-table td {
+        padding: 0.5rem;
+      }
+    }
+
+  script.
+    let currentEntries = [];
+    
+    async function editEntry(logId) {
+      const modal = document.getElementById('editModal');
+      
+      // Fetch entry details
+      try {
+        const response = await fetch(`/reports/entry/${logId}`);
+        const entry = await response.json();
+        
+        // Populate form
+        document.getElementById('editLogId').value = entry.LogID;
+        document.getElementById('editLoginTime').value = formatDateTimeLocal(entry.LoginTime);
+        document.getElementById('editLogoutTime').value = entry.LogoutTime ? formatDateTimeLocal(entry.LogoutTime) : '';
+        document.getElementById('editTemplate').value = entry.workTemplateID;
+        document.getElementById('editNotes').value = entry.notes || '';
+        
+        modal.classList.add('active');
+      } catch (err) {
+        console.error('Error fetching entry:', err);
+        alert('Failed to load entry details');
+      }
+    }
+    
+    function closeModal() {
+      const modal = document.getElementById('editModal');
+      modal.classList.remove('active');
+    }
+    
+    function formatDateTimeLocal(dateString) {
+      const date = new Date(dateString);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      return `${year}-${month}-${day}T${hours}:${minutes}`;
+    }
+    
+    function exportToCSV() {
+      const month = '#{selectedMonth}';
+      const year = '#{currentYear}';
+      window.location.href = `/reports/export?month=${month}&year=${year}`;
+    }
+    
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+      const modal = document.getElementById('editModal');
+      if (event.target === modal) {
+        closeModal();
+      }
+    }

@@ -1,0 +1,360 @@
+extends layout
+
+block content
+  nav.navbar
+    .navbar-brand Clock In/Out
+    .navbar-menu
+      a.nav-item(href="/dashboard") 
+        span.icon 🏠
+        | Dashboard
+      a.nav-item(href="/profile") 
+        span.icon 👤
+        | Profile
+      a.nav-item(href="/reports") 
+        span.icon 📊
+        | Reports
+      a.nav-item(href="/work-templates") 
+        span.icon 📋
+        | Work Templates
+      a.nav-item(href="/logout") 
+        span.icon 🚪
+        | Logout
+
+  .container
+    .clock-section
+      .current-time-display
+        h2 Current Time (v3)
+        #current-time.time-display
+      
+      .status-card
+        if clockedIn
+          .status.clocked-in
+            span.status-icon ✓
+            span.status-text You are currently clocked in
+          p.clock-time Clocked in at: #{clockInTime}
+          form(method="POST" action="/clock-out")
+            button.btn.btn-danger(type="submit") Clock Out
+        else
+          .status.clocked-out
+            span.status-icon ○
+            span.status-text You are currently clocked out
+          form(method="POST" action="/clock-in")
+            .form-group
+              label(for="workTemplate") Select Work Template:
+              select#workTemplate.form-control(name="workTemplateID" required)
+                option(value="" disabled selected) Choose a template...
+                each template in templates
+                  option(value=template.TemplateID)= template.TemplateName
+            .form-group
+              label(for="notes") Notes (optional):
+              textarea#notes.form-control(name="notes" rows="3" placeholder="Add any notes about your work session...")
+            button.btn.btn-success(type="submit") Clock In
+
+    .recent-entries
+      h3 Recent Clock Entries
+      if WorkEntries.length > 0
+        table.entries-table
+          thead
+            tr
+              th Date
+              th Clock In
+              th Clock Out
+              th Duration
+              th Template
+              th Notes
+              th OT
+          tbody
+            each entry in WorkEntries
+              tr
+                td= entry.WorkDate
+                td= entry.clockInTime
+                td= entry.clockOutTime || 'In Progress'
+                td= entry.duration || '-'
+                td= entry.template
+                td.notes-cell= entry.notes || '-'
+                td.ot-cell= entry.ot || '-'
+      else
+        p.no-entries No clock entries yet. Clock in to start tracking your time!
+
+  style.
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #e0e0e0;
+      padding: 10px 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .navbar-brand {
+      font-weight: bold;
+      font-size: 1.3rem;
+      color: #333;
+    }
+
+    .navbar-menu {
+      display: flex;
+      gap: 15px;
+    }
+
+    .nav-item {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .nav-item:hover {
+      text-decoration: underline;
+    }
+    .icon {
+      font-size: 1.2rem;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+    
+    .clock-section {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+    
+    .current-time-display {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    
+    .current-time-display h2 {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      opacity: 0.9;
+    }
+    
+    .time-display {
+      font-size: 2.5rem;
+      font-weight: bold;
+      font-family: 'Courier New', monospace;
+      letter-spacing: 2px;
+    }
+    
+    .status-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+    
+    .status.clocked-in {
+      background: #d4edda;
+      color: #155724;
+      border: 2px solid #c3e6cb;
+    }
+    
+    .status.clocked-out {
+      background: #f8d7da;
+      color: #721c24;
+      border: 2px solid #f5c6cb;
+    }
+    
+    .status-icon {
+      font-size: 1.5rem;
+    }
+    
+    .clock-time {
+      color: #666;
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #2c3e50;
+      font-weight: 500;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: #3498db;
+    }
+    
+    textarea.form-control {
+      resize: vertical;
+      font-family: inherit;
+    }
+    
+    .btn {
+      padding: 0.75rem 2rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      width: 100%;
+    }
+    
+    .btn-success {
+      background: #27ae60;
+      color: white;
+    }
+    
+    .btn-success:hover {
+      background: #229954;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(39,174,96,0.3);
+    }
+    
+    .btn-danger {
+      background: #e74c3c;
+      color: white;
+    }
+    
+    .btn-danger:hover {
+      background: #c0392b;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(231,76,60,0.3);
+    }
+    
+    .recent-entries {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .recent-entries h3 {
+      color: #2c3e50;
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+    }
+    
+    .entries-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .entries-table thead {
+      background: #f8f9fa;
+    }
+    
+    .entries-table th,
+    .entries-table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #dee2e6;
+    }
+    
+    .entries-table th {
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    
+    .entries-table tbody tr:hover {
+      background: #f8f9fa;
+    }
+    
+    .notes-cell {
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    .no-entries {
+      text-align: center;
+      color: #999;
+      padding: 2rem;
+      font-style: italic;
+    }
+    
+    @media (max-width: 768px) {
+      .navbar {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .navbar-menu {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      
+      .clock-section {
+        grid-template-columns: 1fr;
+      }
+      
+      .entries-table {
+        font-size: 0.9rem;
+      }
+      
+      .entries-table th,
+      .entries-table td {
+        padding: 0.5rem;
+      }
+    }
+
+  script.
+    function updateClock() {
+      const now = new Date();
+      const timeString = now.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false 
+      });
+      const dateString = now.toLocaleDateString('en-US', {
+        weekday: 'short',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+      document.getElementById('current-time').innerHTML = timeString + '<br><small style="font-size: 1rem; opacity: 0.8;">' + dateString + '</small>';
+    }
+    
+    updateClock();
+    setInterval(updateClock, 1000);

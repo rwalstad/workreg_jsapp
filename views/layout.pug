@@ -1,0 +1,43 @@
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+  body
+    block content
+
+if user
+  script.
+    // Client-side session timeout warning (optional)
+    let inactivityTime = function () {
+      let time;
+      let warningShown = false;
+      
+      // Reset timer on any user activity
+      window.onload = resetTimer;
+      document.onmousemove = resetTimer;
+      document.onkeypress = resetTimer;
+      document.onclick = resetTimer;
+      document.onscroll = resetTimer;
+      
+      function showWarning() {
+        if (!warningShown) {
+          warningShown = true;
+          // Show warning 2 minutes before timeout (28 minutes)
+          alert('Your session will expire in 2 minutes due to inactivity. Please interact with the page to stay logged in.');
+        }
+      }
+      
+      function logout() {
+        window.location.href = '/logout';
+      }
+      
+      function resetTimer() {
+        clearTimeout(time);
+        warningShown = false;
+        // Show warning after 28 minutes (2 minutes before 30 min timeout)
+        time = setTimeout(showWarning, 28 * 60 * 1000);
+      }
+    };
+    
+    inactivityTime();

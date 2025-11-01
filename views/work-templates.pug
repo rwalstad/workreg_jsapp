@@ -1,0 +1,573 @@
+extends layout
+
+block content
+  nav.navbar
+    .navbar-brand Work Templates
+    .navbar-menu
+      a.nav-item(href="/dashboard") 
+        span.icon 🏠
+        | Dashboard
+      a.nav-item(href="/clock-in") 
+        span.icon ⏰
+        | Clock In
+      a.nav-item(href="/profile") 
+        span.icon 👤
+        | Profile
+      a.nav-item(href="/reports") 
+        span.icon 📊
+        | Reports
+      a.nav-item(href="/logout") 
+        span.icon 🚪
+        | Logout
+
+  .container
+    .header-section
+      h2 Work Templates Management
+      if user.isAdmin
+      p number of templates: #{templates.length}
+      p Admin Level: #{user.userAdminLvl}
+        button.btn.btn-primary#newWorkTemplateBtn
+          span.icon +
+          | Create New Template
+      
+    if error
+      .alert.alert-danger= error
+    
+    if success
+      .alert.alert-success= success
+
+    .templates-grid
+      if templates && templates.length > 0
+        each template in templates
+          .template-card
+            .template-header
+              h3= template.TemplateName
+              .template-actions
+                button.btn-icon.edit-btn(data-id=template.TemplateID data-name=template.TemplateName data-start=template.StartTime data-end=template.EndTime data-hours=template.DefaultHours) ✏️
+                if user.isAdmin
+                  button.btn-icon.delete-btn(data-id=template.TemplateID data-name=template.TemplateName) 🗑️
+            .template-body
+              .template-info
+                .info-row
+                  span.label Start Time:
+                  span.value= template.StartTime || 'Not set'
+                .info-row
+                  span.label End Time:
+                  span.value= template.EndTime || 'Not set'
+                .info-row
+                  span.label Default Hours:
+                  span.value= template.DefaultHours ? template.DefaultHours + ' hours' : 'Not set'
+              .template-id ID: #{template.TemplateID}
+      else
+        .no-templates
+          p No work templates found. Create your first template to get started!
+
+  #templateModal.modal
+    .modal-content
+      .modal-header
+        h3#modalTitle Create New Template
+        button.close-btn#closeModal ×
+      .modal-body
+        form#templateForm(method="POST")
+          input(type="hidden" name="TemplateID" id="TemplateID")
+          input(type="hidden" name="_method" id="formMethod" value="create")
+          
+          .form-group
+            label(for="TemplateName") Template Name *
+            input.form-control(type="text" name="TemplateName" id="TemplateName" required placeholder="e.g., Morning Shift, Office Work")
+          
+          .form-row
+            .form-group.form-col
+              label(for="StartTime") Start Time
+              input.form-control(type="time" name="StartTime" id="StartTime" placeholder="08:00")
+            
+            .form-group.form-col
+              label(for="EndTime") End Time
+              input.form-control(type="time" name="EndTime" id="EndTime" placeholder="16:00")
+
+
+          
+          .modal-footer
+            button.btn.btn-secondary(type="button" id="cancelBtn") Cancel
+            button.btn.btn-primary(type="submit") Save Template
+
+  #deleteModal.modal
+    .modal-content.modal-small
+      .modal-header
+        h3 Confirm Delete
+        button.close-btn#closeDeleteModal ×
+      .modal-body
+        p 
+          | Are you sure you want to delete the template 
+          strong#deleteTemplateName
+          | ?
+        p.warning-text This action cannot be undone.
+      .modal-footer
+        button.btn.btn-secondary#cancelDeleteBtn Cancel
+        form#deleteForm(method="POST")
+          input(type="hidden" name="templateId" id="deleteTemplateId")
+          button.btn.btn-danger(type="submit") Delete
+
+  style.
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 0;
+    }
+    
+   .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #e0e0e0;
+      padding: 10px 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .navbar-brand {
+      font-weight: bold;
+      font-size: 1.3rem;
+      color: #333;
+    }
+
+    .navbar-menu {
+      display: flex;
+      gap: 15px;
+    }
+
+    .nav-item {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .nav-item:hover {
+      text-decoration: underline;
+    }
+
+    
+    .icon {
+      font-size: 1.2rem;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+    
+    .header-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+    
+    .header-section h2 {
+      color: #2c3e50;
+      font-size: 2rem;
+    }
+    
+    .alert {
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+    }
+    
+    .alert-danger {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    
+    .alert-success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    
+    .templates-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    .template-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .template-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    }
+    
+    .template-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .template-header h3 {
+      font-size: 1.3rem;
+      margin: 0;
+    }
+    
+    .template-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .btn-icon {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      padding: 0.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: background 0.3s;
+    }
+    
+    .btn-icon:hover {
+      background: rgba(255,255,255,0.3);
+    }
+    
+    .template-body {
+      padding: 1.5rem;
+    }
+    
+    .template-info {
+      margin-bottom: 1rem;
+    }
+    
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .info-row:last-child {
+      border-bottom: none;
+    }
+    
+    .label {
+      color: #7f8c8d;
+      font-weight: 500;
+    }
+    
+    .value {
+      color: #2c3e50;
+      font-weight: 600;
+    }
+    
+    .template-id {
+      color: #95a5a6;
+      font-size: 0.85rem;
+      text-align: right;
+    }
+    
+    .no-templates {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 4rem 2rem;
+      background: white;
+      border-radius: 12px;
+      color: #95a5a6;
+    }
+    
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .btn-primary {
+      background: #3498db;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: #2980b9;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(52,152,219,0.3);
+    }
+    
+    .btn-secondary {
+      background: #95a5a6;
+      color: white;
+    }
+    
+    .btn-secondary:hover {
+      background: #7f8c8d;
+    }
+    
+    .btn-danger {
+      background: #e74c3c;
+      color: white;
+    }
+    
+    .btn-danger:hover {
+      background: #c0392b;
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal.active {
+      display: flex;
+    }
+    
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      animation: slideIn 0.3s ease-out;
+    }
+    
+    .modal-small {
+      max-width: 450px;
+    }
+    
+    @keyframes slideIn {
+      from {
+        transform: translateY(-50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    
+    .modal-header {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid #ecf0f1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .modal-header h3 {
+      color: #2c3e50;
+      margin: 0;
+    }
+    
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 2rem;
+      color: #95a5a6;
+      cursor: pointer;
+      line-height: 1;
+      transition: color 0.3s;
+    }
+    
+    .close-btn:hover {
+      color: #2c3e50;
+    }
+    
+    .modal-body {
+      padding: 2rem;
+    }
+    
+    .modal-footer {
+      padding: 1.5rem 2rem;
+      border-top: 1px solid #ecf0f1;
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    
+    .form-col {
+      margin-bottom: 0;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #2c3e50;
+      font-weight: 600;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #ecf0f1;
+      border-radius: 6px;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: #3498db;
+    }
+    
+    .form-text {
+      display: block;
+      margin-top: 0.5rem;
+      color: #7f8c8d;
+      font-size: 0.85rem;
+    }
+    
+    .warning-text {
+      color: #e74c3c;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+    
+    @media (max-width: 768px) {
+      .navbar {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .navbar-menu {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      
+      .header-section {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+      }
+      
+      .templates-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+  script.
+    const templateModal = document.getElementById('templateModal');
+    const deleteModal = document.getElementById('deleteModal');
+    const newWorkTemplateBtn = document.getElementById('newWorkTemplateBtn');
+    const closeModal = document.getElementById('closeModal');
+    const closeDeleteModal = document.getElementById('closeDeleteModal');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+    const templateForm = document.getElementById('templateForm');
+    const deleteForm = document.getElementById('deleteForm');
+    const modalTitle = document.getElementById('modalTitle');
+    
+    console.log('Edit buttons found:', document.querySelectorAll('.edit-btn').length);
+    console.log('Delete buttons found:', document.querySelectorAll('.delete-btn').length);
+    
+    if (newWorkTemplateBtn) {
+      newWorkTemplateBtn.addEventListener('click', function() {
+        console.log('New template button clicked');
+        modalTitle.textContent = 'Create New Template';
+        templateForm.action = '/work-templates/create';
+        document.getElementById('formMethod').value = 'create';
+        document.getElementById('TemplateID').value = '';
+        document.getElementById('TemplateName').value = '';
+        document.getElementById('StartTime').value = '';
+        document.getElementById('EndTime').value = '';
+        //document.getElementById('DefaultHours').value = '';
+        templateModal.classList.add('active');
+      });
+    }
+    
+    const editBtns = document.querySelectorAll('.edit-btn');
+    editBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        console.log('Edit button clicked');
+        const id = this.getAttribute('data-id');
+        const name = this.getAttribute('data-name');
+        const start = this.getAttribute('data-start');
+        const end = this.getAttribute('data-end');
+        const hours = this.getAttribute('data-hours');
+        
+        console.log('Template data:', {id, name, start, end, hours});
+        
+        modalTitle.textContent = 'Edit Template';
+        templateForm.action = '/work-templates/update';
+        document.getElementById('formMethod').value = 'update';
+        document.getElementById('TemplateID').value = id;
+        document.getElementById('TemplateName').value = name;
+        document.getElementById('StartTime').value = start || '';
+        document.getElementById('EndTime').value = end || '';
+       // document.getElementById('DefaultHours').value = hours || '';
+        templateModal.classList.add('active');
+      });
+    });
+    
+    const deleteBtns = document.querySelectorAll('.delete-btn');
+    deleteBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        console.log('Delete button clicked');
+        const id = this.getAttribute('data-id');
+        const name = this.getAttribute('data-name');
+        
+        document.getElementById('deleteTemplateId').value = id;
+        document.getElementById('deleteTemplateName').textContent = name;
+        deleteForm.action = '/work-templates/delete';
+        deleteModal.classList.add('active');
+      });
+    });
+    
+    closeModal.addEventListener('click', () => templateModal.classList.remove('active'));
+    closeDeleteModal.addEventListener('click', () => deleteModal.classList.remove('active'));
+    cancelBtn.addEventListener('click', () => templateModal.classList.remove('active'));
+    cancelDeleteBtn.addEventListener('click', () => deleteModal.classList.remove('active'));
+    
+    templateModal.addEventListener('click', function(e) {
+      if (e.target === templateModal) {
+        templateModal.classList.remove('active');
+      }
+    });
+    
+    deleteModal.addEventListener('click', function(e) {
+      if (e.target === deleteModal) {
+        deleteModal.classList.remove('active');
+      }
+    });

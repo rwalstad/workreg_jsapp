@@ -1,0 +1,181 @@
+extends layout
+
+block content
+  nav.navbar
+    .navbar-brand Profile
+    .navbar-menu
+      a.nav-item(href="/dashboard")
+        span.icon 🏠
+        | Dashboard
+      a.nav-item(href="/clock-in")
+        span.icon ⏰
+        | Clock In/Out
+      a.nav-item(href="/reports")
+        span.icon 📊
+        | Reports
+      a.nav-item(href="/work-templates")
+        span.icon 📋
+        | Work Templates
+      a.nav-item(href="/logout")
+        span.icon 🚪
+        | Logout
+
+  .container
+    .page-header
+      h1 👤 User Profile         User adm: ${user.isAdmin}
+      p.subtitle View and edit your account details -       h4 User lvl: #{user.userAdminLvl}
+
+    if message
+      .alert(class=messageType)= message
+
+    .profile-card
+      form.profile-form(method="POST" action="/profile/update")
+        .form-row
+          .form-group
+            label(for="employeeId") Employee ID:
+            input.form-control(type="text" id="employeeId" value=user.EmployeeId readonly)
+          .form-group
+            label(for="email") Email:
+            input.form-control(type="email" id="email" value=user.Email readonly)
+
+        .form-row
+          .form-group
+            label(for="firstName") First Name:
+            input.form-control(type="text" name="firstName" id="firstName" value=user.FirstName required)
+          .form-group
+            label(for="lastName") Last Name:
+            input.form-control(type="text" name="lastName" id="lastName" value=user.LastName required)
+
+        .form-row
+          .form-group
+            label(for="department") Department:
+            input.form-control(type="text" name="department" id="department" value=user.Department)
+          .form-group
+            label(for="position") Position:
+            input.form-control(type="text" name="position" id="position" value=user.Position)
+
+        .form-row
+          .form-group
+            label(for="phone") Phone:
+            input.form-control(type="text" name="phone" id="phone" value=user.Phone)
+          .form-group
+            label(for="address") Address:
+            input.form-control(type="text" name="address" id="address" value=user.Address)
+
+        .form-actions
+          button.btn.btn-primary(type="submit") 💾 Save Changes
+          a.btn.btn-secondary(href="/dashboard") Cancel
+
+  style.
+      body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 0;
+    }
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #e0e0e0;
+      padding: 10px 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .navbar-brand {
+      font-weight: bold;
+      font-size: 1.3rem;
+      color: #333;
+    }
+
+    .navbar-menu {
+      display: flex;
+      gap: 15px;
+    }
+
+    .nav-item {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .nav-item:hover {
+      text-decoration: underline;
+    }
+
+    .profile-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      max-width: 800px;
+      margin: 2rem auto;
+    }
+
+    .profile-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .form-group {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #2c3e50;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    .form-control:focus {
+      border-color: #3498db;
+      outline: none;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+      margin-top: 1rem;
+    }
+
+    .alert {
+      background: #ecf0f1;
+      padding: 1rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .alert.success {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .alert.error {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    @media (max-width: 768px) {
+      .form-row {
+        flex-direction: column;
+      }
+    }

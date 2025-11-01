@@ -1,0 +1,820 @@
+extends layout
+
+block content
+  style.
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #e0e0e0;
+      padding: 10px 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .navbar-brand {
+      font-weight: bold;
+      font-size: 1.3rem;
+      color: #333;
+    }
+
+    .navbar-menu {
+      display: flex;
+      gap: 15px;
+    }
+
+    .nav-item {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .nav-item:hover {
+      text-decoration: underline;
+    }
+
+    .add-record-container {
+      position: absolute;
+      top: 1rem;
+      right: 1.5rem;
+    }
+
+    .add-record-btn {
+      background-color: #2e7d32;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      transition: 0.2s;
+    }
+
+    .add-record-btn:hover {
+      background-color: #256d27;
+      transform: scale(1.05);
+    }
+
+    .container {
+      display: flex;
+      flex-direction: row;
+      padding: 20px;
+      gap: 30px;
+    }
+
+    .month-selector {
+      width: 8%;
+      background: white;
+      padding: 11px;
+      border-radius: 5px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .month-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .month-card {
+      display: block;
+      background: #f2f2f2;
+      padding: 10px;
+      border-radius: 6px;
+      text-decoration: none;
+      color: #333;
+      transition: 0.2s;
+    }
+
+    .month-card:hover {
+      background: #d9d9d9;
+    }
+
+    .month-card.active {
+      background: #b0c4de;
+      font-weight: bold;
+    }
+
+    .report-section {
+      flex-grow: 1;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      position: relative;
+    }
+
+    table.entries-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    table.entries-table th, table.entries-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    table.entries-table th {
+      background-color: #f0f0f0;
+      font-weight: 600;
+    }
+
+    .edit-btn, .save-btn, .cancel-btn, .delete-btn {
+      border: none;
+      padding: 4px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin-right: 5px;
+    }
+
+    .edit-btn { background-color: #1976d2; color: white; }
+    .edit-btn:hover { background-color: #125ea3; }
+
+    .delete-btn { background-color: #d32f2f; color: white; }
+    .delete-btn:hover { background-color: #b71c1c; }
+
+    .save-btn { background-color: #4caf50; color: white; }
+    .cancel-btn { background-color: #999; color: white; }
+
+    .template-select {
+      width: 100%;
+      padding: 4px;
+      font-size: 0.9rem;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+
+    .summary-section {
+      margin-top: 20px;
+      padding-top: 10px;
+      border-top: 2px solid #ddd;
+    }
+
+    .summary-cards {
+      display: flex;
+      gap: 20px;
+      margin-top: 10px;
+    }
+
+    .summary-card {
+      background: #f9f9f9;
+      border-radius: 8px;
+      padding: 10px 15px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* CSV Preview Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      overflow: auto;
+    }
+
+    .modal.show {
+      display: block;
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 2% auto;
+      padding: 20px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 1200px;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #ddd;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      color: #333;
+    }
+
+    .close-btn {
+      font-size: 28px;
+      font-weight: bold;
+      color: #aaa;
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+
+    .close-btn:hover {
+      color: #000;
+    }
+
+    .preview-stats {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+      padding: 15px;
+      background: #f5f5f5;
+      border-radius: 6px;
+    }
+
+    .stat-box {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      background: white;
+      border-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .stat-box .number {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #2e7d32;
+    }
+
+    .stat-box.invalid .number {
+      color: #d32f2f;
+    }
+
+    .stat-box .label {
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 5px;
+    }
+
+    .preview-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    .preview-table th,
+    .preview-table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+
+    .preview-table th {
+      background-color: #f0f0f0;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+    }
+
+    .preview-table tr.invalid {
+      background-color: #ffebee;
+    }
+
+    .preview-table tr.valid {
+      background-color: #f1f8f4;
+    }
+
+    .error-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      background-color: #d32f2f;
+      color: white;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding-top: 15px;
+      border-top: 1px solid #ddd;
+    }
+
+    .modal-actions button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: 0.2s;
+    }
+
+    .confirm-import-btn {
+      background-color: #2e7d32;
+      color: white;
+    }
+
+    .confirm-import-btn:hover {
+      background-color: #1b5e20;
+    }
+
+    .confirm-import-btn:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .cancel-import-btn {
+      background-color: #757575;
+      color: white;
+    }
+
+    .cancel-import-btn:hover {
+      background-color: #616161;
+    }
+
+  nav.navbar
+    .navbar-brand Reports
+    .navbar-menu
+      a.nav-item(href="/dashboard") 
+        span.icon 🏠
+        | Dashboard
+      a.nav-item(href="/clock-in") 
+        span.icon ⏰
+        | Clock In/Out
+      a.nav-item(href="/profile") 
+        span.icon 👤
+        | Profile
+      a.nav-item(href="/work-templates") 
+        span.icon 📋
+        | Work Templates
+      a.nav-item(href="/logout") 
+        span.icon 🚪
+        | Logout
+
+  .container
+    // LEFT: month selector
+    .month-selector
+      h2 Select Month
+      .month-grid
+        each month, index in months
+          a.month-card(
+            href=`/reports?month=${index + 1}&year=${currentYear}`
+            class=(selectedMonth === (index + 1) ? 'active' : '')
+          )
+            .month-name= month
+            if monthData[index + 1]
+              .month-stats
+                .stat-item
+                  span.stat-label Hours:
+                  span.stat-value= monthData[index + 1].totalHours || '0'
+                .stat-item
+                  span.stat-label OT:
+                  span.stat-value= monthData[index + 1].totalOT || '0'
+
+    // RIGHT: report details
+    if selectedMonth && reportEntries.length > 0
+      .report-section
+        .report-header
+          h2= `${months[selectedMonth - 1]} ${currentYear} - Work Details`
+          if user && user.isAdmin
+            .add-record-container
+                button#add-record-btn.add-record-btn(type="button") ➕ Add Record
+                input#import-file(type="file" name="csvfile" accept=".csv" style="display:none;")
+                button#import-btn.add-record-btn(type="button" style="background-color:#0277bd;") 📥 Import CSV
+        table.entries-table
+          thead
+            tr
+              th Date
+              th Clock In
+              th Clock Out
+              th Duration
+              th Template
+              th Notes
+              th OT
+              th Actions
+          tbody
+            each day in reportEntries
+              each entry in day.entries
+
+                tr(data-logid=entry.logid)
+                  
+                  td= day.dateISO + '  (' +  day.weekDay + ')'
+                  td
+                    input(type="time", name="loginTime", value=entry.loginTime, readonly)
+                  td
+                    input(type="time", name="logoutTime", value=entry.logoutTime, readonly)
+                  td= entry.totalWorked
+                  td= entry.workTemplateID
+                  td
+                    input(type="text", name="notes", value=entry.notes, readonly)
+                  td= entry.extraTime
+                  td
+                    button.edit-btn(type="button") Edit
+                    button.delete-btn(type="button") 🗑️
+                    button.save-btn(type="button" hidden) Save
+                    button.cancel-btn(type="button" hidden) Cancel
+
+        .summary-section
+          h3 Monthly Summary
+          .summary-cards
+            .summary-card
+              .card-icon 🕐
+              .card-content
+                .card-label Total Hours
+                .card-value= summary.totalHours
+            .summary-card
+              .card-icon ⚡
+              .card-content
+                .card-label Total OT
+                .card-value= summary.totalOT
+            button#print-btn(type="button", style="margin-left:20px;")
+            span(style="font-size:1.5em;") 🖨️
+              | Print this monthly report
+    else
+      .report-section
+        h3 No data available for this month.
+
+  // CSV Preview Modal
+  #csv-preview-modal.modal
+    .modal-content
+      .modal-header
+        h2 CSV Import Preview
+        button.close-btn &times;
+      
+      #preview-stats.preview-stats(style="display:none;")
+        .stat-box
+          .number#total-records 0
+          .label Total Records
+        .stat-box
+          .number#valid-records 0
+          .label Valid
+        .stat-box.invalid
+          .number#invalid-records 0
+          .label Invalid
+      
+      #preview-table-container
+        p Loading preview...
+      
+      .modal-actions
+        button.cancel-import-btn Cancel
+        button.confirm-import-btn(disabled) Confirm Import
+
+  // ---------- CLIENT SCRIPT ----------
+  script.
+    window.workTemplates = !{JSON.stringify(workTemplates || [])};
+
+    // Edit existing entries
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const row = e.target.closest('tr');
+        row.querySelectorAll('input').forEach(i => i.removeAttribute('readonly'));
+        row.querySelector('.edit-btn').hidden = true;
+        row.querySelector('.delete-btn').hidden = true;
+        row.querySelector('.save-btn').hidden = false;
+        row.querySelector('.cancel-btn').hidden = false;
+      });
+    });
+
+    document.querySelectorAll('.cancel-btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const row = e.target.closest('tr');
+        row.querySelectorAll('input').forEach(i => i.setAttribute('readonly', true));
+        row.querySelector('.edit-btn').hidden = false;
+        row.querySelector('.save-btn').hidden = true;
+        row.querySelector('.delete-btn').hidden = false;
+        row.querySelector('.cancel-btn').hidden = true;
+      });
+    });
+
+    document.querySelectorAll('.save-btn').forEach(btn => {
+      btn.addEventListener('click', async e => {
+        const row = e.target.closest('tr');
+        const logid = row.dataset.logid;
+        const loginTime = row.querySelector('input[name="loginTime"]').value;
+        const logoutTime = row.querySelector('input[name="logoutTime"]').value;
+        const notes = row.querySelector('input[name="notes"]').value;
+
+        const response = await fetch(`/reports/update/${logid}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ loginTime, logoutTime, notes })
+        });
+
+        if (response.ok) {
+          alert('Updated successfully!');
+          location.reload();
+        } else {
+          alert('Failed to update entry.');
+        }
+      });
+    });
+
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', async e => {
+        const row = e.target.closest('tr');
+        const logid = row.dataset.logid;
+        if (!confirm('Are you sure you want to delete this work log?')) return;
+        const response = await fetch(`/reports/delete/${logid}`, { method: 'DELETE' });
+        if (response.ok) {
+          alert('Entry deleted.');
+          row.remove();
+        } else {
+          alert('Failed to delete entry.');
+        }
+      });
+    });
+
+    // -------- ADD RECORD --------
+    const addRecordBtn = document.getElementById('add-record-btn');
+    if (addRecordBtn) {
+      addRecordBtn.addEventListener('click', () => {
+        const tableBody = document.querySelector('.report-section table tbody');
+        if (!tableBody) return;
+
+        const formRow = document.createElement('tr');
+        formRow.classList.add('new-entry-row');
+
+        const templateOptions = Array.isArray(window.workTemplates)
+          ? window.workTemplates.map(t => 
+              `<option value="${t.TemplateID}" data-hours="${t.DefaultHours}">
+                ${t.TemplateID} - ${t.TemplateName} (${t.DefaultHours}h)
+              </option>`
+            ).join('')
+          : '';
+
+        formRow.innerHTML = `
+          <td><input type="date" required></td>
+          <td><input type="time" name="loginTime" required></td>
+          <td><input type="time" name="logoutTime" required></td>
+          <td>-</td>
+          <td>
+            <select class="template-select" required>
+              <option value="">Select Template...</option>
+              ${templateOptions}
+            </select>
+            <small class="template-info" style="display:block;margin-top:2px;color:#555;"></small>
+          </td>
+          <td><input type="text" placeholder="Notes"></td>
+          <td>-</td>
+          <td>
+            <button class="save-new-btn" style="background:#2e7d32;color:white;border:none;padding:4px 10px;border-radius:4px;">Save</button>
+            <button class="cancel-new-btn" style="background:#888;color:white;border:none;padding:4px 10px;border-radius:4px;">Cancel</button>
+          </td>
+        `;
+
+        tableBody.prepend(formRow);
+
+        const templateSelect = formRow.querySelector('.template-select');
+        const extraInfo = formRow.querySelector('.template-info');
+
+        templateSelect.addEventListener('change', () => {
+          const sel = templateSelect.selectedOptions[0];
+          const hrs = sel ? sel.dataset.hours : 0;
+          extraInfo.textContent = hrs ? `Default Hours: ${hrs}h` : '';
+        });
+        
+        formRow.querySelector('.cancel-new-btn').addEventListener('click', () => formRow.remove());
+
+        formRow.querySelector('.save-new-btn').addEventListener('click', async () => {
+          const date = formRow.querySelector('input[type="date"]').value;
+          const login = formRow.querySelector('input[name="loginTime"]').value;
+          const logout = formRow.querySelector('input[name="logoutTime"]').value;
+          const notes = formRow.querySelector('input[placeholder="Notes"]').value;
+          const templateID = templateSelect.value;
+
+          if (!date || !login || !logout || !templateID) {
+            alert('Please fill all required fields.');
+            return;
+          }
+
+          
+          const loginDT = new Date(`${date}T${login}`);
+          const logoutDT = new Date(`${date}T${logout}`);
+          const workedMinutes = Math.max(0, Math.round((logoutDT - loginDT) / 60000));
+          const defaultMinutes = Number(templateSelect.selectedOptions[0].dataset.hours || 0) * 60;
+          const extraMinutes = Math.max(0, workedMinutes - defaultMinutes);
+
+          const payload = {
+            WorkDate: date,
+            LoginTime: login,
+            LogoutTime: logout,
+            TemplateID: templateID,
+            Notes: notes,
+            ExtraTime: extraMinutes
+          };
+
+          try {
+            const res = await fetch('/reports/add', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+            if (res.ok) {
+              alert('Record added successfully!');
+              location.reload();
+            } else {
+              const err = await res.json();
+              alert('Failed to add record: ' + (err.error || 'Unknown error'));
+            }
+          } catch (err) {
+            console.error(err);
+            alert('Error adding record.');
+          }
+        });
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var printBtn = document.getElementById('print-btn');
+      if (printBtn) {
+        printBtn.addEventListener('click', function() {
+          var summary = document.querySelector('.summary-section');
+          var table = document.querySelector('.entries-table');
+          var printContent = summary.outerHTML + table.outerHTML;
+          var win = window.open('', '', 'width=900,height=600');
+          win.document.write(
+            '<html><head><title>Print Report</title><link rel="stylesheet" href="/path/to/your/styles.css"></head><body>' +
+            printContent +
+            '</body></html>'
+          );
+          win.document.close();
+          win.focus();
+          win.print();
+          //win.close();
+        });
+      }
+    });
+
+    // -------- CSV IMPORT WITH PREVIEW --------
+    const importBtn = document.getElementById('import-btn');
+    const importFile = document.getElementById('import-file');
+    const modal = document.getElementById('csv-preview-modal');
+    const closeBtn = modal.querySelector('.close-btn');
+    const cancelBtn = modal.querySelector('.cancel-import-btn');
+    const confirmBtn = modal.querySelector('.confirm-import-btn');
+    
+    let previewData = null;
+
+    if (importBtn && importFile) {
+      importBtn.addEventListener('click', () => importFile.click());
+
+      importFile.addEventListener('change', async () => {
+        if (!importFile.files.length) return;
+        console.log('loading import form');
+        const formData = new FormData();
+        formData.append('csvfile', importFile.files[0]);
+        
+        console.log('Uploading CSV file:', importFile.files[0].name);
+        
+        // Show modal with loading state
+        modal.classList.add('show');
+        document.getElementById('preview-table-container').innerHTML = '<p>Loading preview...</p>';
+        document.getElementById('preview-stats').style.display = 'none';
+        confirmBtn.disabled = true;
+        
+        try {
+          const res = await fetch('/reports/preview-csv', {
+            method: 'POST',
+            body: formData
+          });
+          
+          console.log('Response status:', res.status);
+          console.log('Response content-type:', res.headers.get('content-type'));
+          
+          // Check if response is JSON
+          const contentType = res.headers.get('content-type');
+          if (!contentType || !contentType.includes('application/json')) {
+            const textResponse = await res.text();
+            console.error('Non-JSON response received:', textResponse.substring(0, 500));
+            throw new Error('Server returned an error. Please check the console logs.');
+          }
+          
+          const data = await res.json();
+          
+          if (!res.ok) {
+            throw new Error(data.error || 'Preview failed');
+          }
+          
+          console.log('Preview data received:', data);
+          previewData = data;
+          
+          // Update stats
+          document.getElementById('total-records').textContent = data.totalRecords;
+          document.getElementById('valid-records').textContent = data.validRecords;
+          document.getElementById('invalid-records').textContent = data.invalidRecords;
+          document.getElementById('preview-stats').style.display = 'flex';
+          
+          // Build preview table
+          let tableHTML = `
+            <table class="preview-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                  <th>Clock In</th>
+                  <th>Clock Out</th>
+                  <th>Activity</th>
+                </tr>
+              </thead>
+              <tbody>
+          `;
+          
+          data.preview.forEach(record => {
+            const rowClass = record.valid ? 'valid' : 'invalid';
+            const statusBadge = record.valid 
+              ? '<span style="color:#2e7d32;font-weight:bold;">✓ Valid</span>'
+              : `<span class="error-badge">${record.error}</span>`;
+            
+            tableHTML += `
+              <tr class="${rowClass}">
+                <td>${record.index + 1}</td>
+                <td>${statusBadge}</td>
+                <td>${record.date || '-'}</td>
+                <td>${record.start || '-'}</td>
+                <td>${record.end || '-'}</td>
+                <td>${record.activity || '-'}</td>
+              </tr>
+            `;
+          });
+          
+          tableHTML += '</tbody></table>';
+          document.getElementById('preview-table-container').innerHTML = tableHTML;
+          
+          // Enable confirm button if there are valid records
+          confirmBtn.disabled = data.validRecords === 0;
+          
+        } catch (err) {
+          console.error('Preview error:', err);
+          document.getElementById('preview-table-container').innerHTML = 
+            `<p style="color:#d32f2f;">Error: ${err.message}</p>`;
+        }
+        
+        // Reset file input
+        importFile.value = '';
+      });
+    }
+
+    // Close modal handlers
+    closeBtn.addEventListener('click', () => {
+      modal.classList.remove('show');
+      previewData = null;
+    });
+    
+    cancelBtn.addEventListener('click', () => {
+      modal.classList.remove('show');
+      previewData = null;
+    });
+
+    // Confirm import
+    confirmBtn.addEventListener('click', async () => {
+      if (!previewData || previewData.validRecords === 0) return;
+      
+      confirmBtn.disabled = true;
+      confirmBtn.textContent = 'Importing...';
+      
+      try {
+        const res = await fetch('/reports/import-confirmed', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ records: previewData.preview })
+        });
+        
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error || 'Import failed');
+        }
+        
+        const result = await res.json();
+        alert(result.message || 'Import successful!');
+        modal.classList.remove('show');
+        location.reload();
+        
+      } catch (err) {
+        console.error('Import error:', err);
+        alert('Import failed: ' + err.message);
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = 'Confirm Import';
+      }
+    });
+
+    // Close modal on outside click
+    window.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.classList.remove('show');
+        previewData = null;
+      }
+    });
+
