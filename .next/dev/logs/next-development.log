@@ -1,0 +1,5 @@
+[00:05:24.062] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/home/waldo/workreg/workreg_jsapp/app'
+[00:05:24.070] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/home/waldo/workreg/workreg_jsapp/app'
+[00:05:24.193] Server  LOG      ✓ Compiled in 172ms
+[00:05:24.825] Server  LOG      ✓ Compiled in 571ms
+[00:05:24.889] Server  LOG      ✓ Compiled in 53ms
