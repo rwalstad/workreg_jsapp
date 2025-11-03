@@ -25,6 +25,19 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../public')));
 
+app.use((req, res, next) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; " +
+    "script-src 'self' 'unsafe-inline' https://vercel.live https://va.vercel-scripts.com; " +
+    "style-src 'self' 'unsafe-inline'; " +
+    "img-src 'self' data: https:; " +
+    "connect-src 'self' https://vercel.live https://va.vercel-scripts.com; " +
+    "font-src 'self' data:;"
+  );
+  next();
+});
+
 // Session middleware (MUST BE BEFORE ROUTES!)
 app.use(session({
   secret: process.env.SESSION_SECRET || 'workreg-secret',
