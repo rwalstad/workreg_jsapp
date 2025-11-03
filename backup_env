@@ -1,0 +1,17 @@
+//.env
+DB_PORT=1433
+SESSION_SECRET=mintryggekode1234
+DB_USER=srvtabygg
+DB_PASS=Waldo007*!
+DB_SERVER=srvtabygg.database.windows.net
+DB_DATABASE=azure_workreg
+
+# This was inserted by `prisma init`:
+# Environment variables declared in this file are NOT automatically loaded by Prisma.
+# Please add `import "dotenv/config";` to your `prisma.config.ts` file, or use the Prisma CLI with Bun
+# to load environment variables from .env files: https://pris.ly/prisma-config-env-vars.
+
+# Prisma supports the native connection string format for PostgreSQL, MySQL, SQLite, SQL Server, MongoDB and CockroachDB.
+# See the documentation for all the connection string options: https://pris.ly/d/connection-strings
+
+/* DATABASE_URL="sqlserver://srvtabygg:Waldo007%2A%21@srvtabygg.database.windows.net:1433/azure_workreg;schema=WorkReg"

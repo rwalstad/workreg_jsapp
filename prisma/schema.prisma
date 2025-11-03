@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model Employee {
+  EmployeeID   Int       @id(map: "PK__Employee__7AD04FF1897BF541") @default(autoincrement())
+  FirstName    String    @db.NVarChar(100)
+  LastName     String    @db.NVarChar(100)
+  Email        String    @unique(map: "UQ__Employee__A9D10534F7B3A8BC") @db.NVarChar(150)
+  PasswordHash String    @db.NVarChar(255)
+  CreatedAt    DateTime? @default(now(), map: "DF__Employee__Create__0169315C") @db.DateTime
+  WorkLog      WorkLog[]
+}
+
+model WorkLog {
+  LogID            Int           @id(map: "PK__WorkLog__5E5499A83347C5FB") @default(autoincrement())
+  EmployeeID       Int
+  TemplateID       Int?
+  WorkDate         DateTime?     @default(dbgenerated("CONVERT([date],getdate())"), map: "DF__WorkLog__WorkDat__08162EEB") @db.Date
+  LoginTime        DateTime?     @db.DateTime
+  LogoutTime       DateTime?     @db.DateTime
+  TotalWorkedHours Decimal?      @db.Decimal(17, 6)
+  Employee         Employee      @relation(fields: [EmployeeID], references: [EmployeeID], onUpdate: NoAction, map: "FK__WorkLog__Employe__062DE679")
+  WorkTemplate     WorkTemplate? @relation(fields: [TemplateID], references: [TemplateID], onDelete: NoAction, onUpdate: NoAction, map: "FK__WorkLog__Templat__07220AB2")
+}
+
+model WorkTemplate {
+  TemplateID   Int       @id(map: "PK__WorkTemp__F87ADD07A2601952") @default(autoincrement())
+  TemplateName String    @db.NVarChar(100)
+  StartTime    DateTime  @db.Time
+  EndTime      DateTime  @db.Time
+  DefaultHours Int?
+  WorkLog      WorkLog[]
+}
