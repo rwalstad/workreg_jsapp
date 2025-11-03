@@ -1,6 +1,7 @@
 // routes/index.js
 const express = require('express');
 const router = express.Router();
+//const app = require('../api/app');
 const { requireLogin } = require('../middleware/auth');
 
 // Home route (safe version)

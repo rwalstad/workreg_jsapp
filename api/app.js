@@ -1,4 +1,4 @@
-//.app.js
+// ./api/app.js
 require('dotenv').config();
 console.log('DB_SERVER:', process.env.DB_SERVER);
 console.log('DB_USER:', process.env.DB_USER);
@@ -78,7 +78,8 @@ var clockRouter = require('../routes/clock-in');
 var templatesRouter = require('../routes/work-templates');
 var profileRouter = require('../routes/profile');
 var reportsRouter = require('../routes/reports');
-
+console.log('Type of middleware:', typeof indexRouter);
+console.log('Is Router?:', indexRouter instanceof express.Router);
 app.use('/', indexRouter);
 app.use('/', loginRouter);
 app.use('/', dashboardRouter);
