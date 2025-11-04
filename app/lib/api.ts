@@ -4,11 +4,12 @@
 // They are located in the pages/api directory (or app/[...]/route.js for app
 // directory) and are automatically handled by Next.js.
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/app/api/auth';
+
+import { AccountWithName } from '../../types';
 import { PrismaClient } from '@prisma/client';
 import Cookies from 'js-cookie';
 import { Session } from 'next-auth';
-import { AccountWithName,AutomationAction } from '@/types';
+
 
 export interface CustomSession extends Session {
   user?: {
@@ -27,29 +28,10 @@ export interface LeadSQLData {
   email: string | null;
   phone: string | null;
   status: bigint | null;
-  sales_value: number | null;
-  linkedin_profile: string | null;
-  linkedin_profile_photo: string | null;
-  linkedin_handle: string | null;
-  linkedin_unique_id: string | null;
-  lead_owner: bigint | null;
-  count_stages: bigint | null;
-  tblUser?: { // Include user data for owner name
-    id: bigint;
-    fname: string | null;
-    lname: string | null;
-    email: string | null;
-  } | null;
-  created?: Date; // Add created date
-  updated?: Date; // Add updated date
   company_name?: string | null; // Add company name
   job_title?: string | null; // Add job title
   priority?: number | null; // Add priority field
   notes?: string | null; // Add notes field
-  profile_instagram?: string | null; // Add social profiles
-  profile_facebook?: string | null;
-  profile_twitter?: string | null;
-  profile_whatsapp?: string | null;
   address?: string | null; // Add address fields
   city?: string | null;
   state?: string | null;
@@ -65,30 +47,16 @@ export interface LeadFormData {
   email: string;
   phone: string;
   status: string;
-  sales_value: string;
-  linkedin_profile: string;
-  linkedin_profile_photo: string;
-  linkedin_handle: string;
-  linkedin_unique_id: string;
-  lead_owner: string;
-  lead_owner_name?: string; // Add owner's name for display
-  count_stages: string;
-  created?: string; // Add created date for date filtering
-  updated?: string; // Add updated date
   company_name?: string; // Add company name for search
   job_title?: string; // Add job title for search
   priority?: string; // Add priority field
   notes?: string; // Add notes field
-  profile_instagram?: string; // Add social profiles
-  profile_facebook?: string;
-  profile_twitter?: string;
-  profile_whatsapp?: string;
   address?: string; // Add address fields
   city?: string;
   state?: string;
   country_name?: string;
   postcode?: string;
-  lead_source_name?: string; // Add source information
+
 };
 
 if (process.env.NODE_ENV === 'production') {
@@ -110,31 +78,16 @@ export const transformSqlDataToFormData = (sqlData: LeadSQLData): LeadFormData =
     email: sqlData.email || '',
     phone: sqlData.phone || '',
     status: sqlData.status !== null ? sqlData.status.toString() : '',
-    sales_value: sqlData.sales_value !== null ? sqlData.sales_value.toString() : '',
-    linkedin_profile: sqlData.linkedin_profile || '',
-    linkedin_profile_photo: sqlData.linkedin_profile_photo || '',
-    linkedin_handle: sqlData.linkedin_handle || '',
-    linkedin_unique_id: sqlData.linkedin_unique_id || '',
-    lead_owner: sqlData.lead_owner !== null ? sqlData.lead_owner.toString() : '',
-    lead_owner_name: sqlData.tblUser ?
-      `${sqlData.tblUser.fname || ''} ${sqlData.tblUser.lname || ''}`.trim() : '',
-    count_stages: sqlData.count_stages !== null ? sqlData.count_stages.toString() : '',
-    created: sqlData.created ? sqlData.created.toISOString() : undefined,
-    updated: sqlData.updated ? sqlData.updated.toISOString() : undefined,
     company_name: sqlData.company_name || '',
     job_title: sqlData.job_title || '',
     priority: sqlData.priority !== null && sqlData.priority !== undefined ? sqlData.priority.toString() : '',
     notes: sqlData.notes || '',
-    profile_instagram: sqlData.profile_instagram || '',
-    profile_facebook:  sqlData.profile_facebook || '',
-    profile_twitter:   sqlData.profile_twitter || '',
-    profile_whatsapp:  sqlData.profile_whatsapp || '',
     address: sqlData.address || '',
     city: sqlData.city || '',
     state: sqlData.state || '',
     country_name: sqlData.country_name || '',
     postcode: sqlData.postcode || '',
-    lead_source_name: sqlData.lead_source_name || '',
+    
   };
 };
 
@@ -148,29 +101,16 @@ export const transformFormDataToSqlData = (formData: LeadFormData): LeadSQLData 
     email: formData.email || null,
     phone: formData.phone || null,
     status: formData.status ? BigInt(formData.status) : null,
-    sales_value: formData.sales_value ? Number(formData.sales_value) : null,
-    linkedin_profile: formData.linkedin_profile || null,
-    linkedin_profile_photo: formData.linkedin_profile_photo || null,
-    linkedin_handle: formData.linkedin_handle || null,
-    linkedin_unique_id: formData.linkedin_unique_id || null,
-    lead_owner: formData.lead_owner ? BigInt(formData.lead_owner) : null,
-    count_stages: formData.count_stages ? BigInt(formData.count_stages) : null,
-    created: formData.created ? new Date(formData.created) : undefined,
-    updated: formData.updated ? new Date(formData.updated) : undefined,
     company_name: formData.company_name || null,
     job_title: formData.job_title || null,
     priority: formData.priority ? Number(formData.priority) : null,
     notes: formData.notes || null,
-    profile_instagram: formData.profile_instagram || null,
-    profile_facebook: formData.profile_facebook || null,
-    profile_twitter: formData.profile_twitter || null,
-    profile_whatsapp: formData.profile_whatsapp || null,
     address: formData.address || null,
     city: formData.city || null,
     state: formData.state || null,
     country_name: formData.country_name || null,
     postcode: formData.postcode || null,
-    lead_source_name: formData.lead_source_name || null,
+
   };
 };
 
@@ -182,29 +122,16 @@ export const createEmptyLead = (): LeadSQLData => ({
   email: '',
   phone: '',
   status: null,
-  sales_value: null,
-  linkedin_profile: '',
-  linkedin_profile_photo: '',
-  linkedin_handle: '',
-  linkedin_unique_id: '',
-  lead_owner: null,
-  count_stages: null,
-  created: new Date(),
-  updated: new Date(),
   company_name: '',
   job_title: '',
   priority: 0,
   notes: '',
-  profile_instagram: '',
-  profile_facebook: '',
-  profile_twitter: '',
-  profile_whatsapp: '',
   address: '',
   city: '',
   state: '',
   country_name: '',
   postcode: '',
-  lead_source_name: '',
+
 });
 
 // Define the user response type
@@ -290,62 +217,6 @@ export const getHistory = (userId: string | null): HistoryItem[] => {
 };
 
 //using prismabiblioteket to get data  ✅ 🔎  🆕 👉 ✅  💾  ❌  📋
-export async function getAccountsForUser(user_id: string): Promise<AccountWithNameSerialized[]> {
-  try {
-    // Verify user has access to this account
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user || !session.user.id) {
-      console.error("No valid session found");
-      return [];
-    }
-
-    const currentUsrId = BigInt(session.user.id);
-
-    // Ensure user is requesting their own accounts
-    if (currentUsrId.toString() !== user_id) {
-      console.error("❌ Requested user_id does not match current user");
-      return [{
-        account_id: '-1',
-        access_level: null,
-        tblAccount: {
-          name: 'Error: Requested user_id does not match current user',
-        },
-      }];
-    }
-
-    console.log("Fetching accounts for user_id:", currentUsrId);
-
-    // ✅ FIX: Ensure `tblAccount` is correctly joined
-    const accounts = await prisma.tblAccountUser.findMany({
-      where: { user_id: BigInt(user_id) },
-      select: {
-        account_id: true,
-        access_level: true,
-        tblAccount: { // Ensure the relation is properly selected
-          select: {
-            name: true,  // ✅ Ensure this exists in the API response
-          },
-        },
-      },
-    });
-
-    console.log("Fetched accounts returned from getAccountsForUser. #:", accounts.length);//accounts
-    //return accounts;
-
-    // Convert BigInt to String to avoid JSON serialization issues
-    const formattedAccounts: AccountWithNameSerialized[] = accounts.map((account: AccountWithName) => ({
-      account_id: account.account_id.toString(), // Convert bigint to string
-      access_level: account.access_level,
-      tblAccount: { name: account.tblAccount?.name ?? "Unnamed Account" }, // Access name from the nested tblAccount object
-    }));
-
-    console.log("app/lib/api.ts | Returning formattedAccounts", formattedAccounts[0]);
-    return formattedAccounts;
-  } catch (error) {
-    console.error("Error fetching accounts:", error);
-    return [];
-  }
-}
 
 export async function getUserById(user_id: string): Promise<UserResponse> {
   try {
@@ -386,50 +257,7 @@ interface AccountUserSerialized {
     email: string | null;
   } | null;
 }
-//**get all users accessed to an account**
-export async function getUserAccessedAccount(account_id: string): Promise<AccountUserSerialized[]> {
-  try {
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user || !session.user.id) {
-      console.error("No valid session found");
-      return [];
-    }
 
-    const accounts = await prisma.tblAccountUser.findMany({
-      where: { account_id: BigInt(account_id) },
-      select: {
-        user_id: true,
-        access_level: true,
-        tblUser: {
-          select: {
-            fname: true,
-            lname: true,
-            email: true,
-          },
-        },
-      },
-    });
-    // Convert BigInt to String to avoid JSON serialization issues
-    console.log("Fetched accounts returned from getUserAccessedAccount. #:", accounts.length);
-
-    const formattedAccounts: AccountUserSerialized[] = accounts.map((account :UserAccessedAccountData) => ({
-      user_id: account.user_id.toString(), // Corrected to account.user_id
-      access_level: account.access_level?.toString() || null,
-      tblUser: {
-        fname: account.tblUser?.fname ?? "Unnamed user" ,
-        lname: account.tblUser?.lname ?? "No lastname" ,
-        email: account.tblUser?.email?? "no email"
-      },
-
-    }));
-
-    console.log("app/lib/api.ts | Returning formattedAccounts", formattedAccounts[0]);
-    return formattedAccounts;
-  } catch (error) {
-    console.error("Error fetching accounts:", error);
-    return [];
-  }
-}
 
   /**
  * Fetches all leads that are in a specific pipeline,

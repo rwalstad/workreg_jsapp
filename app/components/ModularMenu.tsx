@@ -9,7 +9,7 @@ import type { Session } from 'next-auth';
 import React, { Children, cloneElement } from 'react';
 import { saveHistory, HistoryItem, getHistory, HistoryItemPath } from '../../app/lib/api';
 import { toast } from "sonner";
-import { useUnsavedChanges } from '@/app/context/unsavedChangesContext';
+
 
 interface Module {
   id: string;
@@ -127,7 +127,6 @@ const ModularMenu: React.FC<ModularMenuProps> = ({ children }) => {
   const [expandedMessage, setExpandedMessage] = useState<string | null>(null);
 
   // Get the unsaved changes context
-  const { hasUnsavedChanges, confirmNavigation, UnsavedChangesDialog } = useUnsavedChanges();
 
   const bellWarning = [
     { id: '1', msg: "Not saved message", tbl: 'tblMessage' },
@@ -223,12 +222,6 @@ const ModularMenu: React.FC<ModularMenuProps> = ({ children }) => {
       return;
     }
 
-    if (hasUnsavedChanges) {
-      confirmNavigation(() => router.push(path));
-    } else {
-      router.push(path);
-    }
-  };
 
   useEffect(() => {
     const storedAccountString = localStorage.getItem('selectedAccount');
@@ -391,27 +384,6 @@ const ModularMenu: React.FC<ModularMenuProps> = ({ children }) => {
                           return;
                         }
 
-                        if (hasUnsavedChanges) {
-                          // Show confirmation before changing account
-                          confirmNavigation(() => {
-                            setSelectedAccount(account);
-                            console.log("💾 dropdown: account set:", account);
-                            localStorage.setItem('selectedAccount', JSON.stringify(account));
-                            saveHistory(account.account_id, 'Account', session?.user?.id?.toString() || '');
-                            setShowDropdown(false);
-                            router.push('/dashboard');
-                            toast.success(`Account "${account.tblAccount.name}" selected`);
-                          });
-                        } else {
-                          // No unsaved changes, switch accounts directly
-                          setSelectedAccount(account);
-                          console.log("💾 dropdown: account set:", account);
-                          localStorage.setItem('selectedAccount', JSON.stringify(account));
-                          saveHistory(account.account_id, 'Account', session?.user?.id?.toString() || '');
-                          setShowDropdown(false);
-                          router.push('/dashboard');
-                          toast.success(`Account "${account.tblAccount.name}" selected`);
-                        }
                       }}
                     >
                       {account.tblAccount.name}
@@ -486,21 +458,7 @@ const ModularMenu: React.FC<ModularMenuProps> = ({ children }) => {
                   <div
                     className="px-4 py-2 cursor-pointer hover:bg-gray-100 flex items-center gap-2"
                     onClick={() => {
-                      // Only show confirmation if current path is not already /profile
-                      if (pathname !== '/profile' && hasUnsavedChanges) {
-                        confirmNavigation(() => {
-                          router.push('/profile');
-                          setShowProfileMenu(false);
-                        });
-                      } else if (pathname !== '/profile') {
-                        // No changes or already on profile page
-                        router.push('/profile');
-                        setShowProfileMenu(false);
-                      } else {
-                        // Already on profile page, just close the menu
-                        setShowProfileMenu(false);
-                      }
-                    }}
+                      router.push('/profile');}}
                   >
                     <Settings2Icon size={16} />
                     Profile Settings
@@ -508,18 +466,7 @@ const ModularMenu: React.FC<ModularMenuProps> = ({ children }) => {
                   <div
                     className="px-4 py-2 cursor-pointer hover:bg-gray-100 text-red-600 flex items-center gap-2"
                     onClick={async () => {
-                      if (hasUnsavedChanges) {
-                        confirmNavigation(async () => {
-                          setSelectedAccount(null);
-                          await signOut({ redirect: false });
-                          router.push('/login');
-                        });
-                      } else {
-                        // No unsaved changes, logout directly
-                        setSelectedAccount(null);
-                        await signOut({ redirect: false });
                         router.push('/login');
-                      }
                     }}
                   >
                     <LogOut size={16} />
@@ -549,5 +496,6 @@ const ModularMenu: React.FC<ModularMenuProps> = ({ children }) => {
     </div>
   );
 };
-
+ return null; // valid ReactNode
+}
 export default ModularMenu;

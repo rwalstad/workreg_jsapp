@@ -7,7 +7,7 @@
  *
  * 🟢 You can import this file directly.
  */
-export type * from './models/Employee.ts'
-export type * from './models/WorkLog.ts'
-export type * from './models/WorkTemplate.ts'
-export type * from './commonInputTypes.ts'
+export type * from './models/Employee.js'
+export type * from './models/WorkLog.js'
+export type * from './models/WorkTemplate.js'
+export type * from './commonInputTypes.js'

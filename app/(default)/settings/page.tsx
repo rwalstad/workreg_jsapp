@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useActions } from 'actionsContext';
+import { useActions } from '../../../actionsContext';
 import { useSession } from 'next-auth/react';
 
 interface Account {

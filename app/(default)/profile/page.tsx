@@ -3,14 +3,14 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { getUserById, UserResponse } from "../../lib/api";
-import { useUnsavedChanges } from '@/app/context/unsavedChangesContext';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../../components/ui/card';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
 import { toast } from "sonner";
-import { useActions } from 'actionsContext';
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useActions } from '../../../actionsContext';
+import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
 
 interface FormData {
   fname: string;
@@ -38,7 +38,7 @@ export default function UserProfilePage() {
   });
 
   // Get the setUnsavedChanges function from our context
-  const { setUnsavedChanges } = useUnsavedChanges();
+
   const { getIcon } = useActions();
 
   useEffect(() => {
@@ -80,28 +80,7 @@ export default function UserProfilePage() {
   }, [session]);
 
   // Check for unsaved changes by comparing current form data with original form data
-  useEffect(() => {
-    // Only check if we've loaded the original data
-    if (!loading && originalFormData) {
-      const hasChanges =
-        formData.fname !== originalFormData.fname ||
-        formData.lname !== originalFormData.lname ||
-        formData.profile_picture !== originalFormData.profile_picture;
 
-      // Update the global unsaved changes state
-      setUnsavedChanges(hasChanges);
-
-      // For debugging
-      if (hasChanges) {
-        console.log("👀 Profile form has unsaved changes");
-      }
-    }
-
-    // Cleanup function to reset unsaved changes when component unmounts
-    return () => {
-      setUnsavedChanges(false);
-    };
-  }, [formData, originalFormData, loading, setUnsavedChanges]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -129,7 +108,7 @@ export default function UserProfilePage() {
       setOriginalFormData({...formData});
 
       // Reset unsaved changes flag
-      setUnsavedChanges(false);
+      
 
       toast.success("Profile updated successfully!");
     } catch (error) {

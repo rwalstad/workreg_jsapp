@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useActions } from 'actionsContext';
-import PlaceholderReference from '@/app/components/PlaceholderReference';
+import { useActions } from '../../../actionsContext';
+
 
 interface Column {
   name: string;
@@ -104,7 +104,7 @@ export default function DbAdminPage() {
                 ))}
               </ul>
             )}
-          <PlaceholderReference onPlaceholderClick={handlePlaceholderClick} />
+          
           </div>
         )}
       </div>

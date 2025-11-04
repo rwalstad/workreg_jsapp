@@ -2,11 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { CustomSession, saveHistory, HistoryItem, getHistory } from '@/app/lib/api';
-import { AccountWithName } from '@/types';
-import { useActions } from 'actionsContext';
-import { useAccount } from '@/app/components/AccountContext';
-import { toast } from "sonner";
+import { CustomSession, saveHistory, HistoryItem, getHistory } from '../../lib/api';
+
+import { useActions } from '../../../actionsContext';
+import { useAccount } from '../../components/AccountContext';
+import { AccountWithName } from '../../../types';
 
 interface PipelineShort {
     id: string;
@@ -18,10 +18,10 @@ export default function DashboardPage() {
     // Use the account context for client-side account selection
     const { selectedAccount, setSelectedAccount, isLoading } = useAccount();
     const [accountWname, setAccountWname] = useState<AccountWithName[]>([]);
-    const [pipelines, setPipelines] = useState<PipelineShort[]>([]);
+
     const [activities, setActivities] = useState<HistoryItem[]>([]);
     const [infoVisibleAcc, setInfoVisibleAcc] = useState(true);
-    const [selectedPipelineId, setSelectedPipeline] = useState<string | null>(null);
+    
     const { getIcon } = useActions();
     const { data: session, status } = useSession() as {
         data: CustomSession | null;
@@ -35,13 +35,6 @@ export default function DashboardPage() {
         console.log("🔎 handleAccountSelect for account:", accountId);
         const account = accountWname.find(acc => acc.account_id.toString() === accountId);
 
-        if (account) {
-            setSelectedAccount(account);
-            if (session?.user?.id) {
-                saveHistory(accountId, 'Account', session.user.id.toString());
-                router.push(`/pipeline/`);
-            }
-        }
     };
 
     const displayMessage = (newMessage: string, duration = 6000) => {
@@ -53,17 +46,6 @@ export default function DashboardPage() {
         }, duration);
     };
 
-    // Fetch pipelines when account changes
-    useEffect(() => {
-        if (!isLoading && selectedAccount) {
-            console.log("🔎 Fetching pipelines for selected account:", selectedAccount);
-            fetchPipes(selectedAccount.account_id.toString());
-            setMessage(`Current account: ${selectedAccount.account_id.toString()}`);
-
-            // Show toast notification but prevent duplicates
-            toast.success(`Account "${selectedAccount?.tblAccount?.name || 'Unnamed'}" selected`);
-        }
-    }, [selectedAccount, isLoading]);
 
     const fetchData = async (userId: string) => {
         console.log("🔎 Fetching accounts for user-ID:", userId);
@@ -122,33 +104,7 @@ export default function DashboardPage() {
         }
     };
 
-    const fetchPipes = async (accountId: string) => {
-        try {
-            console.log("👉 Fetching pipelines for account:", accountId);
-            setPipelineError(null); // Reset error before fetching
 
-            const response = await fetch(`/api/pipeline`);
-            if (!response.ok) {
-                throw new Error(`Failed to fetch pipelines: ${response.statusText}`);
-            }
-
-            const dataPipes: PipelineShort[] = await response.json();
-            console.log("👉 Pipelines fetched:", dataPipes);
-
-            setPipelines(dataPipes);
-
-            if (dataPipes && dataPipes.length > 0) {
-                displayMessage(`Loaded ${dataPipes.length} pipelines for account`, 3000);
-            } else {
-                displayMessage("No pipelines found for account", 3000);
-            }
-        } catch (error: any) {
-            console.error("Could not fetch pipelines:", error);
-            setPipelineError(error.message || '');
-            setPipelines([]);
-            displayMessage(error.message, 6000);
-        }
-    };
 
     // Initial setup - fetch accounts and history
     useEffect(() => {
@@ -271,35 +227,7 @@ export default function DashboardPage() {
                     </h3>
                     <div className="max-h-[400px] overflow-y-auto pr-2">
                         <ol className="Pipeline-list space-y-2" id="Pipeline-list">
-                            {pipelines.length > 0 ? (
-                                pipelines.map((pipeline) => (
-                                    <li
-                                        key={pipeline.id}
-                                        className={`relative group p-2 rounded-md transition-colors ${
-                                            pipeline.id === selectedPipelineId
-                                                ? "bg-primary/20 border-l-4 border-primary"
-                                                : "hover:bg-yellow-300"
-                                        }`}
-                                        onClick={() => {
-                                            setSelectedPipeline(pipeline.id);
-                                            router.push(`/pipeline/${pipeline.id}`);
-                                        }}
-                                    >
-                                        {pipeline.name}
-                                        <span className="absolute left-1/2 -top-8 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 bg-gray-800 text-white text-xs px-2 py-1 rounded-md transition-opacity">
-                                            Click on pipeline to open the pipeline view
-                                        </span>
-                                    </li>
-                                ))
-                            ) : (
-                                <div className="text-center py-4 text-gray-500">
-                                    {pipelineError ? (
-                                        <p>Error loading pipelines: {pipelineError}</p>
-                                    ) : (
-                                        <p>No pipelines found for this account</p>
-                                    )}
-                                </div>
-                            )}
+
                         </ol>
                     </div>
                 </div>

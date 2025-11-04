@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { AccountWithName } from '@/types';
+import { AccountWithName } from '../../types';
 import Cookies from 'js-cookie';
 
 // Cookie name constant for consistency
