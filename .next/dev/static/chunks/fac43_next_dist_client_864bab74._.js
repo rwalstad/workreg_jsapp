@@ -448,11 +448,7 @@ _export(exports, {
         return markAssetError;
     }
 });
-const _interop_require_default = (()=>{
-    const e = new Error("Cannot find module '@swc/helpers/_/_interop_require_default'");
-    e.code = 'MODULE_NOT_FOUND';
-    throw e;
-})();
+const _interop_require_default = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/@swc/helpers/cjs/_interop_require_default.cjs [client] (ecmascript)");
 const _getassetpathfromroute = /*#__PURE__*/ _interop_require_default._(__turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/shared/lib/router/utils/get-asset-path-from-route.js [client] (ecmascript)"));
 const _trustedtypes = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/client/trusted-types.js [client] (ecmascript)");
 const _requestidlecallback = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/client/request-idle-callback.js [client] (ecmascript)");
@@ -757,11 +753,7 @@ Object.defineProperty(exports, "default", {
         return PageLoader;
     }
 });
-const _interop_require_default = (()=>{
-    const e = new Error("Cannot find module '@swc/helpers/_/_interop_require_default'");
-    e.code = 'MODULE_NOT_FOUND';
-    throw e;
-})();
+const _interop_require_default = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/@swc/helpers/cjs/_interop_require_default.cjs [client] (ecmascript)");
 const _addbasepath = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/client/add-base-path.js [client] (ecmascript)");
 const _interpolateas = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/shared/lib/router/utils/interpolate-as.js [client] (ecmascript)");
 const _getassetpathfromroute = /*#__PURE__*/ _interop_require_default._(__turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/shared/lib/router/utils/get-asset-path-from-route.js [client] (ecmascript)"));
@@ -913,16 +905,8 @@ _export(exports, {
         return initScriptLoader;
     }
 });
-const _interop_require_default = (()=>{
-    const e = new Error("Cannot find module '@swc/helpers/_/_interop_require_default'");
-    e.code = 'MODULE_NOT_FOUND';
-    throw e;
-})();
-const _interop_require_wildcard = (()=>{
-    const e = new Error("Cannot find module '@swc/helpers/_/_interop_require_wildcard'");
-    e.code = 'MODULE_NOT_FOUND';
-    throw e;
-})();
+const _interop_require_default = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/@swc/helpers/cjs/_interop_require_default.cjs [client] (ecmascript)");
+const _interop_require_wildcard = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/@swc/helpers/cjs/_interop_require_wildcard.cjs [client] (ecmascript)");
 const _jsxruntime = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/react/jsx-runtime.js [client] (ecmascript)");
 const _reactdom = /*#__PURE__*/ _interop_require_default._(__turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/react-dom/index.js [client] (ecmascript)"));
 const _react = /*#__PURE__*/ _interop_require_wildcard._(__turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/react/index.js [client] (ecmascript)"));
@@ -1477,11 +1461,7 @@ Object.defineProperty(exports, "default", {
         return withRouter;
     }
 });
-const _interop_require_default = (()=>{
-    const e = new Error("Cannot find module '@swc/helpers/_/_interop_require_default'");
-    e.code = 'MODULE_NOT_FOUND';
-    throw e;
-})();
+const _interop_require_default = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/@swc/helpers/cjs/_interop_require_default.cjs [client] (ecmascript)");
 const _jsxruntime = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/react/jsx-runtime.js [client] (ecmascript)");
 const _react = /*#__PURE__*/ _interop_require_default._(__turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/react/index.js [client] (ecmascript)"));
 const _router = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/client/router.js [client] (ecmascript)");
@@ -1549,11 +1529,7 @@ _export(exports, {
         return _withrouter.default;
     }
 });
-const _interop_require_default = (()=>{
-    const e = new Error("Cannot find module '@swc/helpers/_/_interop_require_default'");
-    e.code = 'MODULE_NOT_FOUND';
-    throw e;
-})();
+const _interop_require_default = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/@swc/helpers/cjs/_interop_require_default.cjs [client] (ecmascript)");
 const _react = /*#__PURE__*/ _interop_require_default._(__turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/react/index.js [client] (ecmascript)"));
 const _router = /*#__PURE__*/ _interop_require_default._(__turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/shared/lib/router/router.js [client] (ecmascript)"));
 const _routercontextsharedruntime = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/shared/lib/router-context.shared-runtime.js [client] (ecmascript)");
@@ -1725,11 +1701,7 @@ _export(exports, {
         return _default;
     }
 });
-const _interop_require_default = (()=>{
-    const e = new Error("Cannot find module '@swc/helpers/_/_interop_require_default'");
-    e.code = 'MODULE_NOT_FOUND';
-    throw e;
-})();
+const _interop_require_default = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/@swc/helpers/cjs/_interop_require_default.cjs [client] (ecmascript)");
 const _jsxruntime = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/react/jsx-runtime.js [client] (ecmascript)");
 const _react = /*#__PURE__*/ _interop_require_default._(__turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/react/index.js [client] (ecmascript)"));
 const _router = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/client/router.js [client] (ecmascript)");
@@ -1844,11 +1816,7 @@ _export(exports, {
         return onRecoverableError;
     }
 });
-const _interop_require_default = (()=>{
-    const e = new Error("Cannot find module '@swc/helpers/_/_interop_require_default'");
-    e.code = 'MODULE_NOT_FOUND';
-    throw e;
-})();
+const _interop_require_default = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/@swc/helpers/cjs/_interop_require_default.cjs [client] (ecmascript)");
 const _bailouttocsr = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/shared/lib/lazy-dynamic/bailout-to-csr.js [client] (ecmascript)");
 const _iserror = /*#__PURE__*/ _interop_require_default._(__turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/lib/is-error.js [client] (ecmascript)"));
 const _reportglobalerror = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/client/react-client-callbacks/report-global-error.js [client] (ecmascript)");
@@ -1889,11 +1857,7 @@ Object.defineProperty(exports, "default", {
         return _default;
     }
 });
-const _interop_require_default = (()=>{
-    const e = new Error("Cannot find module '@swc/helpers/_/_interop_require_default'");
-    e.code = 'MODULE_NOT_FOUND';
-    throw e;
-})();
+const _interop_require_default = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/@swc/helpers/cjs/_interop_require_default.cjs [client] (ecmascript)");
 const _mitt = /*#__PURE__*/ _interop_require_default._(__turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/shared/lib/mitt.js [client] (ecmascript)"));
 class Span {
     constructor(name, options, onSpanEnd){
@@ -2575,11 +2539,7 @@ _export(exports, {
         return performFullReload;
     }
 });
-const _interop_require_default = (()=>{
-    const e = new Error("Cannot find module '@swc/helpers/_/_interop_require_default'");
-    e.code = 'MODULE_NOT_FOUND';
-    throw e;
-})();
+const _interop_require_default = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/@swc/helpers/cjs/_interop_require_default.cjs [client] (ecmascript)");
 const _nextdevtools = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/compiled/next-devtools/index.js (raw)");
 const _pagesdevoverlaysetup = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js [client] (ecmascript)");
 const _stripansi = /*#__PURE__*/ _interop_require_default._(__turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/compiled/strip-ansi/index.js [client] (ecmascript)"));
@@ -3035,11 +2995,7 @@ _export(exports, {
         return version;
     }
 });
-const _interop_require_default = (()=>{
-    const e = new Error("Cannot find module '@swc/helpers/_/_interop_require_default'");
-    e.code = 'MODULE_NOT_FOUND';
-    throw e;
-})();
+const _interop_require_default = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/@swc/helpers/cjs/_interop_require_default.cjs [client] (ecmascript)");
 const _jsxruntime = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/react/jsx-runtime.js [client] (ecmascript)");
 __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/build/polyfills/polyfill-module.js [client] (ecmascript)");
 const _react = /*#__PURE__*/ _interop_require_default._(__turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/react/index.js [client] (ecmascript)"));
@@ -3665,11 +3621,7 @@ Object.defineProperty(exports, "default", {
         return _default;
     }
 });
-const _interop_require_default = (()=>{
-    const e = new Error("Cannot find module '@swc/helpers/_/_interop_require_default'");
-    e.code = 'MODULE_NOT_FOUND';
-    throw e;
-})();
+const _interop_require_default = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/@swc/helpers/cjs/_interop_require_default.cjs [client] (ecmascript)");
 const _hotreloadertypes = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/server/dev/hot-reloader-types.js [client] (ecmascript)");
 const _hotreloaderpages = /*#__PURE__*/ _interop_require_default._(__turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js [client] (ecmascript)"));
 const _websocket = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js [client] (ecmascript)");
@@ -3762,11 +3714,7 @@ Object.defineProperty(exports, "default", {
         return _default;
     }
 });
-const _interop_require_default = (()=>{
-    const e = new Error("Cannot find module '@swc/helpers/_/_interop_require_default'");
-    e.code = 'MODULE_NOT_FOUND';
-    throw e;
-})();
+const _interop_require_default = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/@swc/helpers/cjs/_interop_require_default.cjs [client] (ecmascript)");
 const _router = /*#__PURE__*/ _interop_require_default._(__turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/client/router.js [client] (ecmascript)"));
 const _websocket = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js [client] (ecmascript)");
 const _default = async ()=>{
@@ -3842,11 +3790,7 @@ Object.defineProperty(exports, "pageBootstrap", {
         return pageBootstrap;
     }
 });
-const _interop_require_default = (()=>{
-    const e = new Error("Cannot find module '@swc/helpers/_/_interop_require_default'");
-    e.code = 'MODULE_NOT_FOUND';
-    throw e;
-})();
+const _interop_require_default = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/@swc/helpers/cjs/_interop_require_default.cjs [client] (ecmascript)");
 __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/lib/require-instrumentation-client.js [client] (ecmascript)");
 const _ = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/client/index.js [client] (ecmascript)");
 const _ondemandentriesclient = /*#__PURE__*/ _interop_require_default._(__turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/client/dev/on-demand-entries-client.js [client] (ecmascript)"));
@@ -3978,11 +3922,7 @@ if ((typeof exports.default === 'function' || typeof exports.default === 'object
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-const _interop_require_default = (()=>{
-    const e = new Error("Cannot find module '@swc/helpers/_/_interop_require_default'");
-    e.code = 'MODULE_NOT_FOUND';
-    throw e;
-})();
+const _interop_require_default = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/@swc/helpers/cjs/_interop_require_default.cjs [client] (ecmascript)");
 const _ = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/client/index.js [client] (ecmascript)");
 const _hotmiddlewareclient = /*#__PURE__*/ _interop_require_default._(__turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/client/dev/hot-middleware-client.js [client] (ecmascript)"));
 const _pagebootstrap = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/client/page-bootstrap.js [client] (ecmascript)");

@@ -1,0 +1,62 @@
+/* Component-specific styling overrides */
+
+/*
+This file is part of a 3-way file approach to give us multiple layers of styling:
+ - Global defaults through app/globals.css
+ - Application-wide consistency through app/components/ThemeProvider
+ - Component-specific styling through the CSS module app/components/ui-styles.module.css
+
+    import styles from './ui-styles.module.css';
+    <PopoverContent className={styles.whiteBg}>
+      Your content here
+    </PopoverContent>
+*/
+
+/* Popover content */
+.popoverContent {
+  background-color: white !important;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Command menu */
+.commandDialog,
+.commandInput,
+.commandList,
+.commandItem {
+  background-color: white !important;
+}
+
+/* Select dropdown */
+.selectContent {
+  background-color: white !important;
+}
+
+/* Calendar pickers */
+.calendarContent {
+  background-color: white !important;
+}
+
+/* Card content with shadow */
+.card {
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+/* Container with white background */
+.whiteContainer {
+  background-color: white;
+}
+
+/* Any content that needs a white background */
+.whiteBg {
+  background-color: white !important;
+}
+
+/* Dropdown content */
+.dropdownContent {
+  background-color: white !important;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}

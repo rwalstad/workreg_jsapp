@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Definitions for reusable elements -->
+  <defs>
+    <!-- Gradient for the conductor wand -->
+    <linearGradient id="wandGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1E1E2D"/>
+      <stop offset="100%" style="stop-color:#007BFF"/>
+    </linearGradient>
+    
+    <!-- Gradient for the flow lines -->
+    <linearGradient id="flowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#007BFF"/>
+      <stop offset="100%" style="stop-color:#FF7A00"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Main logo group -->
+  <g transform="translate(50,50)">
+    <!-- Conductor's wand -->
+    <g transform="rotate(-45)">
+      <rect x="-40" y="-5" width="80" height="10" rx="5" fill="url(#wandGradient)"/>
+      <circle cx="35" cy="0" r="8" fill="#FF7A00"/>
+    </g>
+    
+    <!-- Flow lines representing automation/orchestration -->
+    <g transform="translate(0,10)">
+      <!-- Three curved lines suggesting movement and flow -->
+      <path d="M-40,-30 Q 0,-40 40,-30" 
+            fill="none" 
+            stroke="url(#flowGradient)" 
+            stroke-width="4"
+            stroke-linecap="round"/>
+      <path d="M-35,-10 Q 0,-20 35,-10" 
+            fill="none" 
+            stroke="url(#flowGradient)" 
+            stroke-width="4"
+            stroke-linecap="round"/>
+      <path d="M-30,10 Q 0,0 30,10" 
+            fill="none" 
+            stroke="url(#flowGradient)" 
+            stroke-width="4"
+            stroke-linecap="round"/>
+    </g>
+  </g>
+  
+</svg>

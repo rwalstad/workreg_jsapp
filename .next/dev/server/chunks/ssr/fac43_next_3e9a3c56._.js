@@ -11,11 +11,7 @@ Object.defineProperty(exports, "default", {
         return App;
     }
 });
-const _interop_require_default = (()=>{
-    const e = new Error("Cannot find module '@swc/helpers/_/_interop_require_default'");
-    e.code = 'MODULE_NOT_FOUND';
-    throw e;
-})();
+const _interop_require_default = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/@swc/helpers/cjs/_interop_require_default.cjs [ssr] (ecmascript)");
 const _jsxruntime = __turbopack_context__.r("[externals]/react/jsx-runtime [external] (react/jsx-runtime, cjs)");
 const _react = /*#__PURE__*/ _interop_require_default._(__turbopack_context__.r("[externals]/react [external] (react, cjs)"));
 const _utils = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/shared/lib/utils.js [ssr] (ecmascript)");
@@ -52,9 +48,7 @@ if ((typeof exports.default === 'function' || typeof exports.default === 'object
 }),
 "[project]/workreg/workreg_jsapp/node_modules/next/app.js [ssr] (ecmascript)", ((__turbopack_context__, module, exports) => {
 
-const e = new Error("Could not parse module '[project]/workreg/workreg_jsapp/node_modules/next/app.js', file not found");
-e.code = 'MODULE_UNPARSABLE';
-throw e;
+module.exports = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/pages/_app.js [ssr] (ecmascript)");
 }),
 ];
 

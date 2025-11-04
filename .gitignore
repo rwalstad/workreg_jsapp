@@ -1,6 +1,9 @@
+.next/
+node_modules/
+.env
+.vscode
+tmp/
+*Zone.Identifier
 .vercel
 
-/generated/prisma
-.env
-/node_modules
 backup_env

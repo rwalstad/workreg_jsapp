@@ -1,11 +1,14 @@
 {
-  "name": "myexpressapp",
-  "version": "0.0.0",
+  "name": "workreg",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
   },
   "dependencies": {
+    "@auth/core": "^0.34.3",
     "clean-css": "^5.3.3",
     "cookie-parser": "~1.4.4",
     "csv-parse": "^6.1.0",
@@ -17,11 +20,31 @@
     "morgan": "~1.9.1",
     "mssql": "^12.0.0",
     "multer": "^2.0.2",
+    "next": "^16.0.1",
+    "next-auth": "^4.24.13",
     "pug": "2.0.0-beta11",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "source-map": "^0.7.6"
   },
   "devDependencies": {
+    "@types/react": "19.2.2",
     "prisma": "^6.18.0",
     "vercel": "^48.8.0"
-  }
+  },
+  "main": "middleware.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rwalstad/workreg_jsapp.git"
+  },
+  "keywords": [
+    "workreg"
+  ],
+  "author": "r aaserud",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/rwalstad/workreg_jsapp/issues"
+  },
+  "homepage": "https://github.com/rwalstad/workreg_jsapp#readme",
+  "description": ""
 }

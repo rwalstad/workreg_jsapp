@@ -734,11 +734,7 @@ _export(exports, {
         return setOwnerStackIfAvailable;
     }
 });
-const _interop_require_default = (()=>{
-    const e = new Error("Cannot find module '@swc/helpers/_/_interop_require_default'");
-    e.code = 'MODULE_NOT_FOUND';
-    throw e;
-})();
+const _interop_require_default = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/@swc/helpers/cjs/_interop_require_default.cjs [client] (ecmascript)");
 const _react = /*#__PURE__*/ _interop_require_default._(__turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/react/index.js [client] (ecmascript)"));
 const _iserror = /*#__PURE__*/ _interop_require_default._(__turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/lib/is-error.js [client] (ecmascript)"));
 const ownerStacks = new WeakMap();
@@ -802,11 +798,7 @@ _export(exports, {
         return isHydrationWarning;
     }
 });
-const _interop_require_default = (()=>{
-    const e = new Error("Cannot find module '@swc/helpers/_/_interop_require_default'");
-    e.code = 'MODULE_NOT_FOUND';
-    throw e;
-})();
+const _interop_require_default = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/@swc/helpers/cjs/_interop_require_default.cjs [client] (ecmascript)");
 const _iserror = /*#__PURE__*/ _interop_require_default._(__turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/lib/is-error.js [client] (ecmascript)"));
 function isHydrationError(error) {
     return (0, _iserror.default)(error) && (error.message === 'Hydration failed because the initial UI does not match what was rendered on the server.' || error.message === 'Text content does not match server-rendered HTML.');
@@ -1120,11 +1112,7 @@ Object.defineProperty(exports, "PagesDevOverlayErrorBoundary", {
         return PagesDevOverlayErrorBoundary;
     }
 });
-const _interop_require_default = (()=>{
-    const e = new Error("Cannot find module '@swc/helpers/_/_interop_require_default'");
-    e.code = 'MODULE_NOT_FOUND';
-    throw e;
-})();
+const _interop_require_default = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/@swc/helpers/cjs/_interop_require_default.cjs [client] (ecmascript)");
 const _react = /*#__PURE__*/ _interop_require_default._(__turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/react/index.js [client] (ecmascript)"));
 class PagesDevOverlayErrorBoundary extends _react.default.PureComponent {
     static getDerivedStateFromError(error) {
@@ -1885,11 +1873,7 @@ _export(exports, {
         return register;
     }
 });
-const _interop_require_default = (()=>{
-    const e = new Error("Cannot find module '@swc/helpers/_/_interop_require_default'");
-    e.code = 'MODULE_NOT_FOUND';
-    throw e;
-})();
+const _interop_require_default = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/@swc/helpers/cjs/_interop_require_default.cjs [client] (ecmascript)");
 const _jsxruntime = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/react/jsx-runtime.js [client] (ecmascript)");
 const _react = /*#__PURE__*/ _interop_require_default._(__turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/react/index.js [client] (ecmascript)"));
 const _nextdevtools = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/compiled/next-devtools/index.js (raw)");
@@ -2127,11 +2111,7 @@ Object.defineProperty(exports, "default", {
         return App;
     }
 });
-const _interop_require_default = (()=>{
-    const e = new Error("Cannot find module '@swc/helpers/_/_interop_require_default'");
-    e.code = 'MODULE_NOT_FOUND';
-    throw e;
-})();
+const _interop_require_default = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/@swc/helpers/cjs/_interop_require_default.cjs [client] (ecmascript)");
 const _jsxruntime = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/react/jsx-runtime.js [client] (ecmascript)");
 const _react = /*#__PURE__*/ _interop_require_default._(__turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/react/index.js [client] (ecmascript)"));
 const _utils = __turbopack_context__.r("[project]/workreg/workreg_jsapp/node_modules/next/dist/shared/lib/utils.js [client] (ecmascript)");
