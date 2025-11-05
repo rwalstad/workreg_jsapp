@@ -1,3 +1,4 @@
+//app/(default)/layout.tsx
 'use client';
 
 import ModularMenu from '../components/ModularMenu';
