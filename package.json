@@ -1,15 +1,17 @@
 {
   "name": "workreg",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "scripts": {
+    "postinstall": "prisma generate",
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start"
+    "build": "prisma generate && next build && cp -r generated/prisma .next/generated/prisma",
+    "start": "next start",
+    "postbuild": "cp -r ../generated/prisma dist/generated/prisma"
   },
   "dependencies": {
     "@auth/core": "^0.34.3",
-    "@prisma/client": "^6.18.0",
+    "@prisma/client": "^6.19.0",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-avatar": "^1.1.11",
     "@radix-ui/react-checkbox": "^1.3.3",
@@ -56,7 +58,7 @@
   },
   "devDependencies": {
     "@types/react": "19.2.2",
-    "prisma": "^6.18.0",
+    "prisma": "^6.19.0",
     "vercel": "^48.8.0"
   },
   "main": "middleware.js",

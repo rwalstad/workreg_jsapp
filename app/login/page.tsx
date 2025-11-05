@@ -15,7 +15,7 @@ const LoginPage = () => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
-
+    console.log('Login attempt for user:', email);
     try {
       const result = await signIn('credentials', {
         email,

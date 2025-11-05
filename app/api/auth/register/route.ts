@@ -16,10 +16,11 @@ This path follows Next.js 13+ App Router conventions, where:
 */
 // app/api/auth/register/route.ts
 import { PrismaClient } from '@prisma/client';
+import { prisma } from '../../../lib/prisma';
 import bcrypt from 'bcryptjs';
 import { NextRequest, NextResponse } from 'next/server';
 
-const prisma = new PrismaClient();
+//const prisma = new PrismaClient();
 
 interface RegisterRequest {
   email: string;
@@ -31,6 +32,13 @@ interface RegisterRequest {
 
 export async function POST(req: NextRequest) {
   try {
+    let prisma: PrismaClient;
+
+    if (!globalThis.prisma) {
+      globalThis.prisma = new PrismaClient();
+    }
+    prisma = globalThis.prisma;
+
     const body: RegisterRequest = await req.json();
     const { email, password, firstName, lastName, inviteEmail } = body;
 

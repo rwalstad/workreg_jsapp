@@ -1,6 +1,6 @@
 /*
 # Email Verification Route
-
+app/api/auth/verify-email/route.ts
 ## Purpose
 This API route handles the email verification process during user registration.
 
@@ -113,11 +113,12 @@ RESEND_API_KEY=your_api_key_here
 - `prisma/schema.prisma` - Database schema definitions
 */
 // app/api/auth/verify-email/route.ts
-import { PrismaClient } from '@prisma/client';
+//import { PrismaClient } from '@prisma/client';
+import { prisma } from '../../../lib/prisma';
 import { Resend } from 'resend';
 import { NextRequest, NextResponse } from 'next/server';
 
-const prisma = new PrismaClient();
+//const prisma = new PrismaClient();
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Generate a 6-digit OTP
@@ -129,42 +130,43 @@ export async function POST(req: NextRequest) {
   try {
     const { email } = await req.json();
 
-    // Generate OTP and set expiry (15 minutes)
-    const otp = generateOTP();
-    const expires = new Date(Date.now() + 15 * 60 * 1000);
+    // Check if email is already verified
+    const existing = await prisma.tblEmailVerification.findFirst({
+      where: { email, verified: 1 },
+    });
+    if (existing) {
+      return NextResponse.json(
+        { message: 'Email already verified' },
+        { status: 400 }
+      );
+    }
 
-    // Store OTP in database
+    const otp = generateOTP();
+    const expires = new Date(Date.now() + 15 * 60 * 1000); // 15 mins
+
+    // Save OTP
     await prisma.tblEmailVerification.create({
-      data: {
-        email,
-        otp,
-        expires,
-        verified: 0
-      }
+      data: { email, otp, expires, verified: 0 },
     });
 
     // Send OTP email
     await resend.emails.send({
-      from:    'Lead Maestro <verify@lmupdates.beautifulstate.life>',
-      to:      email,
-      subject: 'Verify your email address',
+      from: 'WorkReg <verify@lmupdates.beautifulstate.life>',
+      to: email,
+      subject: 'Verify your email',
       html: `
-        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+        <div style="font-family:sans-serif; max-width:600px; margin:0 auto;">
           <h2>Verify your email</h2>
-          <p>Your verification code is:</p>
-          <div style="background-color: #f3f4f6; padding: 20px; text-align: center; font-size: 24px; letter-spacing: 8px; font-weight: bold;">
+          <p>Your OTP code is:</p>
+          <div style="background-color:#f3f4f6; padding:20px; text-align:center; font-size:24px; letter-spacing:8px; font-weight:bold;">
             ${otp}
           </div>
-          <p>This code will expire in 15 minutes.</p>
+          <p>Expires in 15 minutes.</p>
         </div>
-      `
+      `,
     });
 
-    return NextResponse.json(
-      { message: 'OTP sent successfully' },
-      { status: 200 }
-    );
-
+    return NextResponse.json({ message: 'OTP sent successfully' }, { status: 200 });
   } catch (error) {
     console.error('Email verification error:', error);
     return NextResponse.json(

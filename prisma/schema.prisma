@@ -1,6 +1,5 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -37,4 +36,62 @@ model WorkTemplate {
   EndTime      DateTime  @db.Time
   DefaultHours Int?
   WorkLog      WorkLog[]
+}
+
+model tblEmailVerification {
+  id        BigInt    @id @default(autoincrement())
+  email     String    @db.Text
+  otp       String    @db.Text
+  expires   DateTime  @default(dbgenerated("sysutcdatetime()"))
+  verified  Int       @default(0)
+  created   DateTime  @default(dbgenerated("sysutcdatetime()"))
+}
+
+model tblUser {
+  id              BigInt    @id @default(autoincrement())
+  email           String    @unique @db.VarChar(60)
+  fname           String?   @db.NVarChar(30)
+  lname           String?   @db.NVarChar(30)
+  created         DateTime  @default(dbgenerated("sysutcdatetime()"))
+  profile_picture String?   @db.NVarChar
+  access_level    Int       @default(99)
+  password        String?   @db.VarChar(255)
+  last_activity   DateTime  @default(dbgenerated("sysutcdatetime()"))
+
+  tblAccountUsers tblAccountUser[]
+}
+
+model tblAccount {
+  id           BigInt     @id @default(autoincrement())
+  name         String     @db.NVarChar(30)
+  subscription String?    @db.VarChar(30)
+  created      DateTime   @default(dbgenerated("sysutcdatetime()"))
+  last_activity DateTime  @default(dbgenerated("sysutcdatetime()"))
+  tblInvitation  tblInvitation[]
+  tblAccountUsers tblAccountUser[]
+}
+
+model tblInvitation {
+  id        BigInt    @id @default(autoincrement())
+  email     String    @db.VarChar(60)
+  account_id BigInt
+  created   DateTime  @default(dbgenerated("sysutcdatetime()"))
+  expires   DateTime  @default(dbgenerated("dateadd(week,(2),sysutcdatetime())"))
+  status    String?   @db.VarChar(20)
+  role      Int?      @db.TinyInt
+  tblAccount    tblAccount    @relation(fields: [account_id], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  @@index([email], map: "IX_tblInvitations_email")
+}
+model tblAccountUser {
+  account_id   BigInt
+  user_id      BigInt
+  access_level Int?      @db.TinyInt
+
+  @@id([account_id, user_id])
+  @@index([account_id])
+  @@index([user_id])
+
+  tblAccount  tblAccount @relation(fields: [account_id], references: [id])
+  tblUser     tblUser    @relation(fields: [user_id], references: [id])
 }

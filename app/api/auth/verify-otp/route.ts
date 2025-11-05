@@ -132,48 +132,40 @@ Test cases should verify:
 - Edge cases (empty OTP, wrong format)
 */
 // app/api/auth/verify-otp/route.ts
-import { PrismaClient } from '@prisma/client';
+//import { PrismaClient } from '@prisma/client';
+import { prisma } from '../../../lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 
-const prisma = new PrismaClient();
+//const prisma = new PrismaClient();
 
 export async function POST(req: NextRequest) {
     try {
         const { email, otp } = await req.json();
 
-        const verification: any[] = await prisma.$queryRaw`
-            SELECT TOP 1 *
-            FROM LeadMaestro.tblEmailVerification
-            WHERE email LIKE ${email}
-                AND otp LIKE ${otp}
-                AND verified = 0 
-                AND expires > sysutcdatetime();
-            `;
+    // Fetch OTP record
+    const record = await prisma.tblEmailVerification.findFirst({
+      where: { email, otp, verified: 0 },
+      orderBy: { created: 'desc' },
+    });
 
-        // To proceed, we must have array, and the aray must have at least one item
-        if (!verification || !verification.length) {
-            return NextResponse.json(
-                { error: 'Invalid or expired OTP' },
-                { status: 400 }
-            );
-        }
-
-        // Mark as verified
-        await prisma.tblEmailVerification.update({
-            where: { id: verification[0].id },
-            data: { verified: 1 }
-        });
-
-        return NextResponse.json(
-            { message: 'Email verified successfully' },
-            { status: 200 }
-        );
-
-    } catch (error) {
-        console.error('OTP verification error:', error);
-        return NextResponse.json(
-            { error: 'Failed to verify OTP' },
-            { status: 500 }
-        );
+    if (!record) {
+      return NextResponse.json({ error: 'Invalid OTP' }, { status: 400 });
     }
+
+    const now = new Date();
+    if (record.expires < now) {
+      return NextResponse.json({ error: 'OTP expired' }, { status: 400 });
+    }
+
+    // Mark verified
+    await prisma.tblEmailVerification.update({
+      where: { id: record.id },
+      data: { verified: 1 },
+    });
+
+    return NextResponse.json({ message: 'Email verified successfully' }, { status: 200 });
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json({ error: 'Verification failed' }, { status: 500 });
+  }
 }

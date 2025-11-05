@@ -8,11 +8,8 @@ import { useActions } from '../../../actionsContext';
 import { useAccount } from '../../components/AccountContext';
 import { AccountWithName } from '../../../types';
 
-interface PipelineShort {
-    id: string;
-    name: string;
-    created: string;
-}
+// disable static generation
+export const dynamic = 'force-dynamic';
 
 export default function DashboardPage() {
     // Use the account context for client-side account selection

@@ -9,7 +9,6 @@
 │   │   │   └── page.tsx
 │   │   ├── layout.tsx
 │   │   ├── messages
-│   │   ├── page.js
 │   │   ├── profile
 │   │   │   └── page.tsx
 │   │   ├── readme.md
@@ -89,10 +88,15 @@
 │       ├── models
 │       │   ├── Employee.ts
 │       │   ├── WorkLog.ts
-│       │   └── WorkTemplate.ts
+│       │   ├── WorkTemplate.ts
+│       │   ├── tblAccount.ts
+│       │   ├── tblEmailVerification.ts
+│       │   ├── tblInvitation.ts
+│       │   └── tblUser.ts
 │       └── models.ts
 ├── lib
 │   ├── email.ts
+│   ├── prisma.ts
 │   └── utils.ts
 ├── middleware.js
 ├── next-env.d.ts
@@ -10787,6 +10791,51 @@
 │   │   │   │   └── index.mjs.map
 │   │   │   └── package.json
 │   │   ├── react-roving-focus
+│   │   │   ├── LICENSE
+│   │   │   ├── README.md
+│   │   │   ├── dist
+│   │   │   │   ├── index.d.mts
+│   │   │   │   ├── index.d.ts
+│   │   │   │   ├── index.js
+│   │   │   │   ├── index.js.map
+│   │   │   │   ├── index.mjs
+│   │   │   │   └── index.mjs.map
+│   │   │   ├── node_modules
+│   │   │   │   └── @radix-ui
+│   │   │   │       ├── react-context
+│   │   │   │       │   ├── README.md
+│   │   │   │       │   ├── dist
+│   │   │   │       │   │   ├── index.d.mts
+│   │   │   │       │   │   ├── index.d.ts
+│   │   │   │       │   │   ├── index.js
+│   │   │   │       │   │   ├── index.js.map
+│   │   │   │       │   │   ├── index.mjs
+│   │   │   │       │   │   └── index.mjs.map
+│   │   │   │       │   └── package.json
+│   │   │   │       ├── react-primitive
+│   │   │   │       │   ├── LICENSE
+│   │   │   │       │   ├── README.md
+│   │   │   │       │   ├── dist
+│   │   │   │       │   │   ├── index.d.mts
+│   │   │   │       │   │   ├── index.d.ts
+│   │   │   │       │   │   ├── index.js
+│   │   │   │       │   │   ├── index.js.map
+│   │   │   │       │   │   ├── index.mjs
+│   │   │   │       │   │   └── index.mjs.map
+│   │   │   │       │   └── package.json
+│   │   │   │       └── react-slot
+│   │   │   │           ├── LICENSE
+│   │   │   │           ├── README.md
+│   │   │   │           ├── dist
+│   │   │   │           │   ├── index.d.mts
+│   │   │   │           │   ├── index.d.ts
+│   │   │   │           │   ├── index.js
+│   │   │   │           │   ├── index.js.map
+│   │   │   │           │   ├── index.mjs
+│   │   │   │           │   └── index.mjs.map
+│   │   │   │           └── package.json
+│   │   │   └── package.json
+│   │   ├── react-select
 │   │   │   ├── LICENSE
 │   │   │   ├── README.md
 │   │   │   ├── dist
@@ -53185,7 +53234,6 @@
 │   │   │   ├── temporary-directory-B83uKxJF.cjs
 │   │   │   ├── temporary-directory-CwHp0_NW.mjs
 │   │   │   └── types-Cxp8y2TL.d.ts
-│   │   ├── node_modules
 │   │   └── package.json
 │   ├── type-is
 │   │   ├── HISTORY.md
@@ -54327,6 +54375,7 @@
 ├── src
 │   └── app
 │       └── layout.tsx
+├── tbl_create.txt
 ├── treeoutput.txt
 ├── tsconfig.json
 ├── tsconfig.tsbuildinfo
@@ -54347,4 +54396,4 @@
     ├── templates.pug
     └── work-templates.pug
 
-4451 directories, 49897 files
+4460 directories, 49937 files

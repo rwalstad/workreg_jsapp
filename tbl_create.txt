@@ -1,0 +1,108 @@
+CREATE TABLE WorkReg.tblEmailVerification (
+  id bigint IDENTITY(1, 1) NOT NULL,
+  email text COLLATE Danish_Norwegian_CI_AS NOT NULL,
+  otp text COLLATE Danish_Norwegian_CI_AS NOT NULL,
+  expires datetime DEFAULT sysutcdatetime() NOT NULL,
+  verified int DEFAULT 0 NOT NULL,
+  created datetime DEFAULT sysutcdatetime() NOT NULL,
+  PRIMARY KEY CLUSTERED (id)
+    WITH (
+      PAD_INDEX = OFF, IGNORE_DUP_KEY = OFF, STATISTICS_NORECOMPUTE = OFF,
+      ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+)
+ON [PRIMARY]
+TEXTIMAGE_ON [PRIMARY]
+GO
+
+CREATE TABLE WorkReg.tblUser (
+  id bigint IDENTITY(1, 1) NOT NULL,
+  email varchar(60) COLLATE Danish_Norwegian_CI_AS NOT NULL,
+  fname nvarchar(30) COLLATE Danish_Norwegian_CI_AS NULL,
+  lname nvarchar(30) COLLATE Danish_Norwegian_CI_AS NULL,
+  created datetime DEFAULT sysutcdatetime() NOT NULL,
+  profile_picture nvarchar(max) COLLATE Danish_Norwegian_CI_AS NULL,
+  access_level smallint DEFAULT 99 NOT NULL,
+  password varchar(255) COLLATE Danish_Norwegian_CI_AS NULL,
+  last_activity datetime DEFAULT sysutcdatetime() NOT NULL,
+  PRIMARY KEY CLUSTERED (id)
+    WITH (
+      PAD_INDEX = OFF, IGNORE_DUP_KEY = OFF, STATISTICS_NORECOMPUTE = OFF,
+      ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON),
+  UNIQUE (email)
+    WITH (
+      PAD_INDEX = OFF, IGNORE_DUP_KEY = OFF, STATISTICS_NORECOMPUTE = OFF,
+      ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+)
+ON [PRIMARY]
+GO
+
+CREATE TABLE WorkReg.tblAccount (
+  id bigint IDENTITY(1, 1) NOT NULL,
+  name nvarchar(30) COLLATE Danish_Norwegian_CI_AS NOT NULL,
+  subscription varchar(30) COLLATE Danish_Norwegian_CI_AS NULL,
+  created datetime DEFAULT sysutcdatetime() NOT NULL,
+  last_activity datetime DEFAULT sysutcdatetime() NOT NULL,
+  PRIMARY KEY CLUSTERED (id)
+    WITH (
+      PAD_INDEX = OFF, IGNORE_DUP_KEY = OFF, STATISTICS_NORECOMPUTE = OFF,
+      ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+)
+ON [PRIMARY]
+GO
+
+CREATE TABLE WorkReg.tblAccountUser (
+  account_id bigint NOT NULL,
+  user_id bigint NOT NULL,
+  access_level tinyint NULL,
+  CONSTRAINT PK_AccountUser PRIMARY KEY CLUSTERED (account_id, user_id)
+    WITH (
+      PAD_INDEX = OFF, IGNORE_DUP_KEY = OFF, STATISTICS_NORECOMPUTE = OFF,
+      ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON),
+  CONSTRAINT AccountUser_fk1 FOREIGN KEY (account_id) 
+  REFERENCES WorkReg.tblAccount (id) 
+  ON UPDATE NO ACTION
+  ON DELETE NO ACTION,
+  CONSTRAINT AccountUser_fk2 FOREIGN KEY (user_id) 
+  REFERENCES WorkReg.tblUser (id) 
+  ON UPDATE NO ACTION
+  ON DELETE NO ACTION
+)
+ON [PRIMARY]
+GO
+
+EXEC sp_addextendedproperty 'MS_Description', N'0 is owner. 1 is accepted user. 2 is invited', N'schema', N'LeadMaestro', N'table', N'tblAccountUser', N'column', N'access_level'
+GO
+
+CREATE TABLE WorkReg.tblInvitation (
+  id bigint IDENTITY(1, 1) NOT NULL,
+  email varchar(60) COLLATE Danish_Norwegian_CI_AS NOT NULL,
+  account_id bigint NOT NULL,
+  created datetime DEFAULT sysutcdatetime() NOT NULL,
+  expires datetime DEFAULT dateadd(week,(2),sysutcdatetime()) NOT NULL,
+  status varchar(20) COLLATE Danish_Norwegian_CI_AS NULL,
+  role tinyint NULL,
+  PRIMARY KEY CLUSTERED (id)
+    WITH (
+      PAD_INDEX = OFF, IGNORE_DUP_KEY = OFF, STATISTICS_NORECOMPUTE = OFF,
+      ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON),
+  FOREIGN KEY (account_id) 
+  REFERENCES WorkReg.tblAccount (id) 
+  ON UPDATE NO ACTION
+  ON DELETE NO ACTION
+)
+ON [PRIMARY]
+GO
+
+CREATE NONCLUSTERED INDEX IX_tblInvitations_email ON WorkReg.tblInvitation
+  (email)
+WITH (
+  PAD_INDEX = OFF,
+  DROP_EXISTING = OFF,
+  STATISTICS_NORECOMPUTE = OFF,
+  SORT_IN_TEMPDB = OFF,
+  ONLINE = OFF,
+  ALLOW_ROW_LOCKS = ON,
+  ALLOW_PAGE_LOCKS = ON)
+ON [PRIMARY]
+GO
+
