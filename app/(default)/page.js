@@ -1,5 +1,6 @@
 "use client";
 // This page represents the index in the web application, ie. "/"
+//app/(default)/page.js
 
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
