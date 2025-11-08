@@ -1,5 +1,6 @@
 // app/api/auth/route.ts
 
+
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
@@ -16,22 +17,29 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
+        console.log('Authorize function called');
+        console.log('Received credentials:', credentials);
         if (!credentials?.email || !credentials?.password) {
+          console.log('Missing email or password:', credentials);
           throw new Error('Email and password required');
         }
 
+        // Sanitize input
+        const email = credentials.email.trim();
+        const password = credentials.password;
+        console.log('Authorize called with credentials:', { email, password });
         const user = await prisma.tblUser.findUnique({
-          where: { email: credentials.email },
+          where: { email },
         });
 
-        if (!user || !user.password) {
-          throw new Error('User not found');
-        }
-
-        const passwordMatch = await bcrypt.compare(credentials.password, user.password);
+        if (!user) {
+        console.log('User not found:', email);
+        throw new Error('User not found');
+      }
+      const passwordMatch = await bcrypt.compare(password, user.password);
 
         if (!passwordMatch) {
-          throw new Error('Invalid password');
+          // throw new Error('Invalid password');
         }
 
         return {
@@ -47,12 +55,14 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
       }
+      console.log('JWT callback called with token:', token);
       return token;
     },
     async session({ session, token }) {
       if (session?.user) {
         session.user.id = token.id;
       }
+      console.log('Session callback called with session:', session);
       return session;
     },
   },

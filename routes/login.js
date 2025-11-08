@@ -1,6 +1,5 @@
 // routes/login.js
-var express = require('express');
-var router = express.Router();
+
 const { sql, getPool } = require('../config/database');
 const { requireLogin } = require('../middleware/auth');
 

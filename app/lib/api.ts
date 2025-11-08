@@ -3,20 +3,21 @@
 //API routes are serverless functions that handle requests to specific endpoints.
 // They are located in the pages/api directory (or app/[...]/route.js for app
 // directory) and are automatically handled by Next.js.
-import { getServerSession } from 'next-auth/next';
 
+import { fetchHistory } from "../utils/history";
 import { AccountWithName } from '../../types';
 import { PrismaClient } from '@prisma/client';
-import Cookies from 'js-cookie';
-import { Session } from 'next-auth';
+import { jwtVerify } from "jose";
 
 
-export interface CustomSession extends Session {
+export interface CustomSession  {
   user?: {
-    id?: string;
-    name?: string | null;
-    email?: string | null;
-    image?: string | null;
+    id?: number;
+    email?: string;
+    fname?: string | null;
+    lname?: string | null;
+    accessLvl?: number;
+    last_activity?: string | Date;
   };
 }
 let prisma: PrismaClient;
@@ -169,53 +170,6 @@ interface AccountWithNameSerialized {
   tblAccount: { name: string | null };
 }
 
-// function to save the history to cookies
-// TODO:expand history to include userid as diff ppl might use same computer
-export const saveHistory = (id: string, path: HistoryItemPath, usrId: string): void => {
-  // Create the HistoryItem object
-  const now = new Date();
-  const formattedDateTime = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}  Time:  ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-  const newItem: HistoryItem = {
-    id: id.toString(),
-    path,
-    hDateTime: formattedDateTime,
-    usrId: usrId.toString(),
-  };
-  console.log("🔎 141: saveHistory: ", newItem);
-  // Get the current history
-  const currentHistory = getHistory(usrId);
-
-  // Update the history with the new item
-  const updatedHistory = [newItem, ...currentHistory.filter(item => item.id !== newItem.id)].slice(0, 5);
-
-  // Save the updated history to cookies
-  Cookies.set('userHistory', JSON.stringify(updatedHistory), { expires: 30, path: '/' });
-};
-//************************* */
-// Function to get the history from cookies
-export const getHistory = (userId: string | null): HistoryItem[] => {
-  try {
-    const historyCookie = Cookies.get('userHistory');
-
-    if (!historyCookie) {
-      return []; // Return empty array if no history cookie
-    }
-
-    const allHistoryItems: HistoryItem[] = JSON.parse(historyCookie);
-
-    if (!userId) {
-      return allHistoryItems; //return all items if no userid.
-    }
-
-    const filteredHistory: HistoryItem[] = allHistoryItems.filter(item => item.usrId === userId);
-    return filteredHistory;
-
-  } catch (error) {
-    console.error("Error parsing history from cookies:", error);
-    return [];
-  }
-};
-
 //using prismabiblioteket to get data  ✅ 🔎  🆕 👉 ✅  💾  ❌  📋
 
 export async function getUserById(user_id: string): Promise<UserResponse> {
@@ -266,61 +220,11 @@ interface AccountUserSerialized {
  * @param pipelineId - The ID of the pipeline to fetch leads for
  * @returns An array of pipeline lead objects with lead and stage information
  */
-export const fetchLeadsInPipeline = async (pipelineId: string) => {
-  try {
-    console.log(`👉 API fetchLeadsInPipeline for pipeline: ${pipelineId}`);
-    //app/api/pipeline/[id]/leads/
-    const response = await fetch(`/api/pipeline/${pipelineId}/leads`);
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch pipeline leads: ${response.statusText}`);
-    }
-
-    // The response will contain all leads assigned to any stage in this pipeline
-    const pipelineLeads = await response.json();
-    console.log(`API fetchLeadsInPipeline Found ${pipelineLeads.length} leads in pipeline ${pipelineId}`);
-
-    return pipelineLeads;
-  } catch (err) {
-    console.error("Error fetching pipeline leads:", err);
-    return [];
-  }
-};
 
 // Check if a lead is already in a pipeline and get its stage
 // Function 2: Check if a lead is already in a pipeline and get its stage
-export const checkLeadInPipeline = (pipelineLeads: any[], leadId: string): {
-  isInPipeline: boolean;
-  stageId: string | null;
-  pipelineLeadId: string | null;
-} => {
-  if (!leadId || !pipelineLeads || pipelineLeads.length === 0) {
-    return {
-      isInPipeline: false,
-      stageId: null,
-      pipelineLeadId: null
-    };
-  }
 
-  // Find the lead in the pipeline leads array
-  const foundLead = pipelineLeads.find(pl =>
-    pl.lead_id && pl.lead_id.toString() === leadId.toString()
-  );
-
-  if (foundLead) {
-    return {
-      isInPipeline: true,
-      stageId: foundLead.pipelinestage_id?.toString() || null,
-      pipelineLeadId: foundLead.id?.toString() || null
-    };
-  }
-
-  return {
-    isInPipeline: false,
-    stageId: null,
-    pipelineLeadId: null
-  };
-};
 
 
   /**

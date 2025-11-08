@@ -1,7 +1,7 @@
 // app/page.tsx
 import Link from 'next/link';
 //import { signIn } from '@auth/react';
-import { signIn } from 'next-auth/react';
+
 import { getToken } from 'next-auth/jwt';
 
 export default function Home() {
@@ -18,7 +18,7 @@ export default function Home() {
               <Link href="/kontakt">Kontakt</Link>
               </li>
             <li>
-              <Link href="/project-login">Project Login</Link>
+              <Link href="/login">Project Login</Link>
               </li>
           </ul>
         </nav>

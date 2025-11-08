@@ -71,7 +71,8 @@ export async function POST(req: NextRequest) {
     // Start transaction
     const result = await prisma.$transaction(async (tx) => {
       // Check for valid invitation if inviteEmail is provided
-      let invitation = null;
+      let invitation = "-";
+      //let invitation = null;
       if (inviteEmail) {
         invitation = await tx.tblInvitation.findFirst({
           where: {
@@ -97,7 +98,7 @@ export async function POST(req: NextRequest) {
           lname: lastName,
 
           // providing a default value if invitation.role is null
-          access_level: invitation && invitation.role !== null ? invitation.role : 99, // Set access level based on invitation or default
+         // access_level: invitation && invitation.role !== null ? invitation.role : 99, // Set access level based on invitation or default
         }
       });
 
@@ -105,18 +106,19 @@ export async function POST(req: NextRequest) {
         // Link user to the invited account
         await tx.tblAccountUser.create({
           data: {
-            account_id: invitation.account_id,
+/*            account_id: invitation.account_id,
             user_id: user.id,
             access_level: invitation.role
-          }
+  */        }
         });
 
         // Update invitation status
+        /*
         await tx.tblInvitation.update({
           where: { id: invitation.id },
           data: { status: 'accepted' }
         });
-      } else {
+   */   } else {
         // Create new account for non-invited users
         const account = await tx.tblAccount.create({
           data: {

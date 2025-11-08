@@ -22,22 +22,6 @@ const defaultContextValue: AccountContextType = {
 
 const AccountContext = createContext<AccountContextType>(defaultContextValue);
 
-// Helper to safely convert to BigInt
-// TODO: Consolidate all bigIntSerializer codes across the application
-const safeBigInt = (value: unknown): bigint | null => {
-  if (value === null || value === undefined) return null;
-
-  try {
-    if (typeof value === 'bigint') return value;
-    if (typeof value === 'number') return BigInt(value);
-    if (typeof value === 'string') return BigInt(value);
-    return null;
-  } catch (e) {
-    console.error('Error converting to BigInt:', e);
-    return null;
-  }
-};
-
 // Helper to safely parse JSON with error handling
 const safeJsonParse = (jsonString: string | null | undefined): any => {
   if (!jsonString) return null;
@@ -54,44 +38,46 @@ export const AccountProvider = ({ children }: { children: ReactNode }) => {
   const [selectedAccount, setSelectedAccountState] = useState<AccountWithName | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Function to set the selected account both in state and cookie
+  // Function to set the selected account both in state and storage
   const setSelectedAccount = (account: AccountWithName | null) => {
+    console.log("🔎 43: AccountContext: setSelectedAccount called with account:", account);
+    
     // Update state
     setSelectedAccountState(account);
-
-    // Update cookie - store only what's needed to restore the account
+    
+    // Update localStorage and cookie
     if (account) {
       try {
-        // Make a "safe" version of the account for storage
-        const safeAccount = {
-          account_id: account.account_id.toString(),
-          access_level: account.access_level,
-          tblAccount: {
-            name: account.tblAccount?.name || null,
-          }
-        };
-
-        const cookieValue = JSON.stringify(safeAccount);
-
-        // Set cookie with a 30-day expiration
-        Cookies.set(SELECTED_ACCOUNT_COOKIE, cookieValue, { expires: 30, path: '/' });
-
-        // Also update localStorage for redundancy
+        // Store the full account object
+        const accountToStore = JSON.stringify(account);
+        
+        // Save to localStorage
         if (typeof window !== 'undefined') {
-          localStorage.setItem(SELECTED_ACCOUNT_COOKIE, cookieValue);
+          localStorage.setItem('selectedAccount', accountToStore);
+          console.log("✅ Saved account to localStorage:", account);
         }
+        
+        // Optionally save to cookie as well (for SSR access)
+        Cookies.set(SELECTED_ACCOUNT_COOKIE, accountToStore, { 
+          path: '/',
+          expires: 7 // 7 days
+        });
+        console.log("✅ Saved account to cookie");
+        
       } catch (error) {
-        console.error('Error saving account to cookie/localStorage:', error);
+        console.error('❌ Error saving account to storage:', error);
       }
     } else {
-      // Remove cookie if no account is selected
+      // Remove storage if no account is selected
       try {
-        Cookies.remove(SELECTED_ACCOUNT_COOKIE, { path: '/' });
         if (typeof window !== 'undefined') {
-          localStorage.removeItem(SELECTED_ACCOUNT_COOKIE);
+          localStorage.removeItem('selectedAccount');
+          console.log("🗑️ Removed account from localStorage");
         }
+        Cookies.remove(SELECTED_ACCOUNT_COOKIE, { path: '/' });
+        console.log("🗑️ Removed account from cookie");
       } catch (error) {
-        console.error('Error removing account from cookie/localStorage:', error);
+        console.error('❌ Error removing account from storage:', error);
       }
     }
   };
@@ -99,71 +85,46 @@ export const AccountProvider = ({ children }: { children: ReactNode }) => {
   // Load selected account from localStorage on initial mount
   useEffect(() => {
     const loadAccount = () => {
+      console.log("🔎 AccountContext: Loading account from storage...");
       setIsLoading(true);
 
-      // Wrap everything in try/catch to handle any unexpected errors
       try {
-        // Default to null (no account)
-        let selectedAccountData = null;
-
-        // First try localStorage (client-side only)
-        if (typeof window !== 'undefined') {
-          const localStorageData = localStorage.getItem(SELECTED_ACCOUNT_COOKIE);
-          const parsedLocalStorage = safeJsonParse(localStorageData);
-          if (parsedLocalStorage) {
-            selectedAccountData = parsedLocalStorage;
-          }
+        if (typeof window === 'undefined') {
+          console.log("⚠️ Window not available (SSR), skipping load");
+          setIsLoading(false);
+          return;
         }
 
-        // If no account in localStorage, try cookies
-        if (!selectedAccountData) {
-          const cookieData = Cookies.get(SELECTED_ACCOUNT_COOKIE);
-          const parsedCookie = safeJsonParse(cookieData);
-          if (parsedCookie) {
-            selectedAccountData = parsedCookie;
+        // Try to load from localStorage first
+        const storedAccountString = localStorage.getItem('selectedAccount');
+        
+        if (storedAccountString) {
+          const storedAccount = safeJsonParse(storedAccountString);
+          
+          if (storedAccount) {
+            console.log("✅ Loaded account from localStorage:", storedAccount);
+            setSelectedAccountState(storedAccount);
+          } else {
+            console.log("⚠️ Could not parse stored account");
           }
-        }
-
-        // If we found data in either place, process it
-        if (selectedAccountData) {
-          // Convert string account_id to BigInt for internal use
-          const accountId = safeBigInt(selectedAccountData.account_id);
-
-          if (accountId !== null) {
-            // Create a properly-typed account object
-            const accountObject: AccountWithName = {
-              account_id: accountId,
-              access_level: selectedAccountData.access_level || null,
-              tblAccount: {
-                name: selectedAccountData.tblAccount?.name || null
-              }
-            };
-
-            // Update state with the selected account
-            setSelectedAccountState(accountObject);
-
-            // Ensure both localStorage and cookie are in sync
-            const serializedAccount = JSON.stringify({
-              account_id: accountId.toString(),
-              access_level: accountObject.access_level,
-              tblAccount: { name: accountObject.tblAccount?.name || null }
-            });
-
-            if (typeof window !== 'undefined') {
-              localStorage.setItem(SELECTED_ACCOUNT_COOKIE, serializedAccount);
+        } else {
+          // Try cookie as fallback
+          const cookieAccount = Cookies.get(SELECTED_ACCOUNT_COOKIE);
+          if (cookieAccount) {
+            const parsedAccount = safeJsonParse(cookieAccount);
+            if (parsedAccount) {
+              console.log("✅ Loaded account from cookie:", parsedAccount);
+              setSelectedAccountState(parsedAccount);
             }
-
-            Cookies.set(SELECTED_ACCOUNT_COOKIE, serializedAccount, {
-              expires: 30,
-              path: '/'
-            });
+          } else {
+            console.log("ℹ️ No stored account found");
           }
         }
       } catch (error) {
-        console.error('Error loading account from storage:', error);
+        console.error('❌ Error loading account from storage:', error);
       } finally {
-        // Always complete loading
         setIsLoading(false);
+        console.log("✅ AccountContext loading complete");
       }
     };
 

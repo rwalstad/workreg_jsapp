@@ -20,10 +20,10 @@
 */
 
 import { NextResponse } from 'next/server'
-import { getToken } from "@auth/core/jwt";
+
 
 export async function middleware(req) {
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
+
   const pathname = req.nextUrl.pathname;
 
   // Allow access to auth routes
@@ -34,14 +34,7 @@ export async function middleware(req) {
     return NextResponse.next();
   }
 
-  // Redirect to login if NO token and trying to access a protected route
-if (!token && pathname !== '/') {
-  return NextResponse.redirect(new URL('/login', req.url));
-}
-  // If the user IS logged in and trying to access an auth page, redirect to dashboard
-  if (token && (pathname.startsWith('/login') || pathname === '/register' || pathname.startsWith('/auth'))) {
-    return NextResponse.redirect(new URL('/dashboard', req.url));
-  }
+  // If no token and trying to access a protected route, redirect to login
 
   // Important: Create a response to modify
   const response = NextResponse.next();

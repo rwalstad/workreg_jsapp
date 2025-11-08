@@ -1,16 +1,16 @@
-//app/(default)/layout.tsx
 
+//app/dashboard/layout.tsx
 import { AccountProvider } from "../components/AccountContext";
 import { ActionsProvider } from "../../actionsContext";
-import ModularMenu from "../components/ModularMenu";
+//import ModularMenu from "../components/ModularMenu";
 
 export default function DefaultLayout({ children }) {
   return (
     <AccountProvider>
       <ActionsProvider>
-        <ModularMenu>
+
           {children}
-        </ModularMenu>
+
       </ActionsProvider>
     </AccountProvider>
   );

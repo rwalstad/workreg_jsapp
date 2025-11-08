@@ -1,4 +1,5 @@
 //actionsContext.tsx
+'use client';
 import React, { createContext, useContext } from 'react';
 import {
   AlertCircleIcon,

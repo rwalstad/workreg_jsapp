@@ -1,15 +1,12 @@
-//app/components/ModularMenu.tsx
+//app/dashboard/dashboardClient.tsx
 "use client";
-import { useState, useEffect, ReactNode, useCallback } from 'react';
+import { useState, useEffect , ReactNode} from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Menu, Home, Settings, Users, NotebookTabs, Columns, Settings2Icon, Bell, UserCircle, ChevronDown, LogOut, LucideIcon, ChartArea, MessageSquare, CirclePlay } from 'lucide-react';
-import MenuItem from './MenuItem';
+import MenuItem from './../components/MenuItem';
 import React, { Children, cloneElement } from 'react';
-import { HistoryItem, HistoryItemPath } from '../../app/lib/api';
+import { HistoryItem, HistoryItemPath } from '../lib/api';
 import { toast } from "sonner";
-import { useAccount } from './AccountContext';
-import { useAuth } from '../hooks/useAuth'; // Use custom auth hook
-import { getSession } from "../../lib/getSession";
 
 interface Module {
   id: string;
@@ -17,6 +14,21 @@ interface Module {
   title: string;
   icon: LucideIcon;
   description: string;
+}
+interface User {
+  id?: number;
+  email?: string;
+  fname?: string | null;
+  lname?: string | null;
+  accessLvl?: number;
+  last_activity?: string | Date;
+}
+interface Account {
+  account_id: string;
+  name?: string;
+  tblAccount?: {
+    name: string | null;
+  };
 }
 interface JWTPayload {
   id: number;
@@ -26,24 +38,10 @@ interface JWTPayload {
   accessLvl: number;
   last_activity?: string | Date;
 }
-interface User {
-  id: string;
-  email: string;
-  fname: string;
-  lname: string;
-  accessLvl: number;
-  last_activity?: string;
-}
-interface Account {
-  account_id: string;
-  name?: string;
-  tblAccount?: {
-    name: string | null;
-  };
-}
 
 interface ModularMenuProps {
   children: ReactNode;
+  user: User | null;
 }
 
 // Add this custom type to extend the default Session type
@@ -106,14 +104,13 @@ const modules: Module[] = [
   }
 ];
 
-const ModularMenu: React.FC<ModularMenuProps> = ({ children }) => {
+const ModularMenu: React.FC<ModularMenuProps> = ({  user, children }) => {
   const pathname = usePathname();
-  const [user, setUser] = useState<User | null>(null);
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [selectedAccount, setSelectedAccount] = useState<Account | null>(null);
-  const [loading, setLoading] = useState(true);
 //  const { selectedAccount, setSelectedAccount, isLoading: accountLoading } = useAccount();
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
   const accountLoading = loading;
   const [currentTitle, setCurrentTitle] = useState<string | null>(null);
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
@@ -143,6 +140,7 @@ const ModularMenu: React.FC<ModularMenuProps> = ({ children }) => {
 
   // Fetch user session and accounts
   const fetchSessionAndAccounts = async () => {
+    /*
     try {
       const resUser = await fetch('/api/auth/me');
       if (!resUser.ok) throw new Error('Failed to fetch session');
@@ -167,14 +165,15 @@ const ModularMenu: React.FC<ModularMenuProps> = ({ children }) => {
       setSelectedAccount(null);
     } finally {
       setLoading(false);
-    } 
+    } */
   };
   useEffect(() => {
-    fetchSessionAndAccounts();
+    console.log("✅ ModularMenu: received accounts:", accounts);
+    fetchAccounts(user?.id || 0);
   }, []);
 
   // Fetch user accounts
-  const fetchAccounts = async (userId: string | undefined) => {
+  const fetchAccounts = async (userId: number | 0) => {
     if (!userId) return;
     console.log("👉 ModularMenu: Fetching accounts for user:", userId);
     
@@ -186,9 +185,10 @@ const ModularMenu: React.FC<ModularMenuProps> = ({ children }) => {
 
       // If there's no selected account yet and we have accounts, select the first one
       if (!selectedAccount && data.length > 0) {
-        console.log("ℹ️ ModularMenu: No account selected, setting first account");
+        console.log("ℹ️ ModularMenu: No account selected, setting first account:", data[0]);
         setSelectedAccount(data[0]);
         toast.info(`Selected account: ${data[0].name || data[0].tblAccount?.name || data[0].account_id}`);
+        setLoading(true);
       }
     } catch (error) {
       console.error("❌ ModularMenu: Could not fetch accounts:", error);
@@ -215,7 +215,7 @@ const ModularMenu: React.FC<ModularMenuProps> = ({ children }) => {
       setNewAccountName("");
       
       // Refresh accounts list
-      await fetchAccounts(user?.id);
+      await fetchAccounts(user?.id || 0);
     } catch (error) {
       console.error("❌ Error creating account:", error);
       toast.error("Failed to create account");
@@ -265,6 +265,7 @@ const ModularMenu: React.FC<ModularMenuProps> = ({ children }) => {
 
   // Get display name for selected account
   const getAccountDisplayName = () => {
+    console.log("🔎 ModularMenu: Getting display name for selectedAccount:", selectedAccount);
     if (!selectedAccount) return "Select Account";
     return selectedAccount.name || selectedAccount.tblAccount?.name || `Account ${selectedAccount.account_id}`;
   };
